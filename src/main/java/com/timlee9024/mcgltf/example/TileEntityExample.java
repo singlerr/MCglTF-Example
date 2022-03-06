@@ -4,8 +4,4 @@ import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityExample extends TileEntity {
 
-	public TileEntityExample() {
-		super(Example.TILE_ENTITY_EXAMPLE_TYPE);
-	}
-
 }
