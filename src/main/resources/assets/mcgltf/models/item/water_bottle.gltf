@@ -1,0 +1,257 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 2549,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 2549,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 2549,
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 2549,
+      "type": "VEC3",
+      "max": [
+        0.05445001,
+        0.130220339,
+        0.0544500239
+      ],
+      "min": [
+        -0.05445001,
+        -0.130220339,
+        -0.0544500239
+      ]
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5123,
+      "count": 13530,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "generator": "glTF Tools for Unity",
+    "version": "2.0",
+    "copyright": "Water Bottle by Microsoft, CC0 1.0, https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0/WaterBottle"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 20392
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 20392,
+      "byteLength": 30588
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 50980,
+      "byteLength": 40784
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 91764,
+      "byteLength": 30588
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 122352,
+      "byteLength": 27060
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "water_bottle.bin",
+      "byteLength": 149412,
+      "extras":
+      {
+        "resourceLocation": "mcgltf:models/item/water_bottle.bin"
+      }
+    }
+  ],
+  "images": [
+    {
+      "uri": "water_bottle_color.png",
+      "extras":
+      {
+        "resourceLocation": "mcgltf:models/item/water_bottle_color_emissive_color.png"
+      }
+    },
+    {
+      "uri": "water_bottle_occlusion_roughness_metallic.png",
+      "extras":
+      {
+        "resourceLocation": "mcgltf:models/item/water_bottle_glossiness_metallic_emissive.png"
+      }
+    },
+    {
+      "uri": "water_bottle_normal.png",
+      "extras":
+      {
+        "resourceLocation": "mcgltf:models/item/water_bottle_normal.png"
+      }
+    },
+    {
+      "uri": "water_bottle_emissive.png",
+      "extras":
+      {
+        "resourceLocation": "mcgltf:models/item/water_bottle_emissive.png"
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "TEXCOORD_0": 0,
+            "NORMAL": 1,
+            "TANGENT": 2,
+            "POSITION": 3
+          },
+          "indices": 4,
+          "material": 0
+        }
+      ],
+      "name": "WaterBottle"
+    }
+  ],
+  "materials": [
+    {
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      },
+      "normalTexture": {
+        "index": 2
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "emissiveFactor": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "emissiveTexture": {
+        "index": 3
+      },
+      "name": "BottleMat",
+      "extras": {
+        "colorTexture": {
+         "index": 0
+        },
+        "normalTexture": {
+         "index": 2
+        },
+        "specularTexture": {
+         "index": 1
+        }
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "translation": [
+        0.5,
+        0.75,
+        0.6
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ],
+      "name": "WaterBottle"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "thirdperson_lefthand",
+      "nodes": [
+        0
+      ]
+    },
+    {
+      "name": "thirdperson_righthand",
+      "nodes": [
+        0
+      ]
+    },
+    {
+      "name": "firstperson_lefthand",
+      "nodes": [
+        0
+      ]
+    },
+    {
+      "name": "firstperson_righthand",
+      "nodes": [
+        0
+      ]
+    },
+    {
+      "name": "head",
+      "nodes": [
+        0
+      ]
+    },
+    {
+      "name": "gui",
+      "nodes": [
+        0
+      ]
+    },
+    {
+      "name": "ground",
+      "nodes": [
+        0
+      ]
+    },
+    {
+      "name": "fixed",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "source": 0
+    },
+    {
+      "source": 1
+    },
+    {
+      "source": 2
+    },
+    {
+      "source": 3
+    }
+  ]
+}
