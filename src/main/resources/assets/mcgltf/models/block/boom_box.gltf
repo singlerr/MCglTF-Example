@@ -155,7 +155,7 @@
       },
       "name": "BoomBox_Mat",
       "extras": {
-        "colorTexture": {
+        "baseColorTexture": {
          "index": 0
         },
         "normalTexture": {
