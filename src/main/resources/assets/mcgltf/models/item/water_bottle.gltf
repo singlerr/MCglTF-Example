@@ -155,7 +155,7 @@
       },
       "name": "BottleMat",
       "extras": {
-        "colorTexture": {
+        "baseColorTexture": {
          "index": 0
         },
         "normalTexture": {
