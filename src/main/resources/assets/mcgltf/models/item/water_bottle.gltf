@@ -192,49 +192,6 @@
   "scene": 0,
   "scenes": [
     {
-      "name": "thirdperson_lefthand",
-      "nodes": [
-        0
-      ]
-    },
-    {
-      "name": "thirdperson_righthand",
-      "nodes": [
-        0
-      ]
-    },
-    {
-      "name": "firstperson_lefthand",
-      "nodes": [
-        0
-      ]
-    },
-    {
-      "name": "firstperson_righthand",
-      "nodes": [
-        0
-      ]
-    },
-    {
-      "name": "head",
-      "nodes": [
-        0
-      ]
-    },
-    {
-      "name": "gui",
-      "nodes": [
-        0
-      ]
-    },
-    {
-      "name": "ground",
-      "nodes": [
-        0
-      ]
-    },
-    {
-      "name": "fixed",
       "nodes": [
         0
       ]
