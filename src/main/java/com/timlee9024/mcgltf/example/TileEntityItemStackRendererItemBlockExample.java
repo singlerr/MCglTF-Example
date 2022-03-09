@@ -36,11 +36,12 @@ public class TileEntityItemStackRendererItemBlockExample extends TileEntityItemS
 		if(commands != null) {
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glShadeModel(GL11.GL_SMOOTH);
-			GL11.glDepthMask(true);
+			
 			for(Animation animation : animations) {
 				animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(Minecraft.getMinecraft().world, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 			}
 			commands.forEach((command) -> command.run());
+			
 			GL11.glPopAttrib();
 		}
 	}

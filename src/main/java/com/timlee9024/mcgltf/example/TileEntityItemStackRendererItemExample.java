@@ -52,6 +52,7 @@ public class TileEntityItemStackRendererItemExample extends TileEntityItemStackR
 				animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(Minecraft.getMinecraft().world, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 			}
 			commands.forEach((command) -> command.run());
+			
 			GL11.glPopAttrib();
 			GL11.glPopMatrix();
 		}

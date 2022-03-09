@@ -47,6 +47,8 @@ public class ClientProxy extends CommonProxy {
 	@SubscribeEvent
 	public void onEvent(ModelRegistryEvent event) {
 		ItemCameraTransformsHelper.registerDummyModelToAccessCurrentTransformTypeForTEISR(item);
+		
+		//The regular way of register base model for TEISR, use this if you don't need perspective-wise rendering.
 		ModelLoader.setCustomModelResourceLocation(itemBlock, 0, new ModelResourceLocation("mcgltf:example_item_block#inventory"));
 	}
 
