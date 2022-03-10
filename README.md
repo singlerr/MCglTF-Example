@@ -15,4 +15,4 @@ In order to adapt into BSL Shaders' SEUS/Old PBR format, some change were made:
 1. Build MCglTF with "gradlew jar" to create a [deobuscated version](https://forums.minecraftforge.net/topic/81617-1152-eclipse-and-gradle-how-to-use-jar-from-another-project-and-import-solved) of MCglTF.
 2. Create a folder named `libs` in the same dir level as `src`.
 3. Put deobuscated version of MCglTF into the `libs` folder.
-4. In Eclipse IDE, Add MCglTF jar as `Referenced Libraries` via `Project > Properties > Java Build Path > Libraries > Add JARs`.
+4. In Eclipse IDE, add MCglTF jar as `Referenced Libraries` via `Project > Properties > Java Build Path > Libraries > Add JARs`.
