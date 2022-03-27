@@ -5,10 +5,12 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.timlee9024.mcgltf.IGltfModelReceiver;
+import com.timlee9024.mcgltf.MCglTF;
 import com.timlee9024.mcgltf.RenderedGltfModel;
 
 import de.javagl.jgltf.model.GltfAnimations;
@@ -22,13 +24,15 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class TileEntityRendererExample extends TileEntityRenderer<TileEntityExample> implements IGltfModelReceiver {
+public class ExampleTileEntityRenderer extends TileEntityRenderer<ExampleTileEntity> implements IGltfModelReceiver {
 
-	protected List<Runnable> commands;
+	protected List<Runnable> vanillaCommands;
+	
+	protected List<Runnable> shaderModCommands;
 	
 	protected List<Animation> animations;
 	
-	public TileEntityRendererExample(TileEntityRendererDispatcher p_i226006_1_) {
+	public ExampleTileEntityRenderer(TileEntityRendererDispatcher p_i226006_1_) {
 		super(p_i226006_1_);
 	}
 
@@ -39,13 +43,17 @@ public class TileEntityRendererExample extends TileEntityRenderer<TileEntityExam
 
 	@Override
 	public void onModelLoaded(RenderedGltfModel renderedModel) {
-		commands = renderedModel.sceneCommands.get(0);
+		vanillaCommands = renderedModel.vanillaSceneCommands.get(0);
+		shaderModCommands = renderedModel.shaderModSceneCommands.get(0);
 		animations = GltfAnimations.createModelAnimations(renderedModel.gltfModel.getAnimationModels());
 	}
 
+	/**
+	 * Since you use custom ISTER for BlockItem instead of TER, the last parameters p_225616_6_ which control overlay color is almost unused.
+	 */
 	@Override
-	public void render(TileEntityExample p_225616_1_, float p_225616_2_, MatrixStack p_225616_3_, IRenderTypeBuffer p_225616_4_, int p_225616_5_, int p_225616_6_) {
-		if(commands != null) {
+	public void render(ExampleTileEntity p_225616_1_, float p_225616_2_, MatrixStack p_225616_3_, IRenderTypeBuffer p_225616_4_, int p_225616_5_, int p_225616_6_) {
+		if(vanillaCommands != null) {
 			GL11.glPushMatrix();
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			
@@ -56,14 +64,6 @@ public class TileEntityRendererExample extends TileEntityRenderer<TileEntityExam
 			GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			
-			GL13.glActiveTexture(GL13.GL_TEXTURE1);
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL13.glActiveTexture(GL13.GL_TEXTURE2);
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			
-			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE1, (short)(p_225616_6_ & '\uffff'), (short)(p_225616_6_ >> 16 & '\uffff'));
-			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_225616_5_ & '\uffff'), (short)(p_225616_5_ >> 16 & '\uffff'));
 			
 			RenderSystem.multMatrix(p_225616_3_.last().pose());
 			World world = p_225616_1_.getLevel();
@@ -87,11 +87,25 @@ public class TileEntityRendererExample extends TileEntityRenderer<TileEntityExam
 					break;
 				}
 			}
+			
 			Minecraft mc = Minecraft.getInstance();
 			for(Animation animation : animations) {
 				animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, p_225616_2_) % animation.getEndTimeS());
 			}
-			commands.forEach((command) -> command.run());
+			
+			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_225616_5_ & '\uffff'), (short)(p_225616_5_ >> 16 & '\uffff'));
+			
+			MCglTF.CURRENT_PROGRAM = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+			if(MCglTF.CURRENT_PROGRAM == 0) {
+				GL13.glActiveTexture(GL13.GL_TEXTURE2);
+				GL11.glEnable(GL11.GL_TEXTURE_2D);
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+				vanillaCommands.forEach((command) -> command.run());
+			}
+			else {
+				shaderModCommands.forEach((command) -> command.run());
+			}
+			
 			GL11.glPopAttrib();
 			GL11.glPopMatrix();
 		}

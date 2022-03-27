@@ -1,5 +1,6 @@
 {
 	"item.mcgltf.example_item": "MCglTF Example Item",
+	"item.mcgltf.example_entity_spawn_egg": "MCglTF Example Entity Spawn Egg",
 	"block.mcgltf.example_block": "MCglTF Example Block",
-	"item.mcgltf.example_entity": "MCglTF Example Entity"
+	"entity.minecraft.creeper": "MCglTF Example Entity"
 }

@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalBlock;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -13,9 +13,9 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 
-public class BlockExample extends HorizontalBlock {
+public class ExampleBlock extends HorizontalBlock {
 
-	protected BlockExample(Properties p_i48377_1_) {
+	protected ExampleBlock(Properties p_i48377_1_) {
 		super(p_i48377_1_);
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
 	}
@@ -27,7 +27,7 @@ public class BlockExample extends HorizontalBlock {
 
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new TileEntityExample();
+		return new ExampleTileEntity();
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class BlockExample extends HorizontalBlock {
 	}
 
 	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> p_206840_1_) {
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> p_206840_1_) {
 		p_206840_1_.add(FACING);
 	}
 
