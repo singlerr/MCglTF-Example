@@ -44,7 +44,7 @@ public class Example {
 
 	public static ExampleBlock EXAMPLE_BLOCK;
 	public static TileEntityType<ExampleTileEntity> EXAMPLE_TILE_ENTITY_TYPE;
-	public static EntityType<ExampleEntity> EXAMPLE_ENTITY;
+	public static EntityType<ExampleEntity> EXAMPLE_ENTITY_TYPE;
 	
 	@Mod.EventBusSubscriber(value = Dist.DEDICATED_SERVER, bus = Mod.EventBusSubscriber.Bus.MOD)
 	public static class Server {
@@ -71,12 +71,12 @@ public class Example {
 
 		@SubscribeEvent
 		public static void onEntityTypeRegistryEvent(final RegistryEvent.Register<EntityType<?>> event) {
-			EXAMPLE_ENTITY = EntityType.Builder.of(ExampleEntity::new, EntityClassification.MISC)
+			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, EntityClassification.MISC)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(10)
 					.build("mcgltf:example_entity");
-			EXAMPLE_ENTITY.setRegistryName(new ResourceLocation("mcgltf", "example_entity"));
-			event.getRegistry().register(EXAMPLE_ENTITY);
+			EXAMPLE_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_entity"));
+			event.getRegistry().register(EXAMPLE_ENTITY_TYPE);
 		}
 		
 		@SubscribeEvent
@@ -89,14 +89,14 @@ public class Example {
 			item.setRegistryName(EXAMPLE_BLOCK.getRegistryName());
 			event.getRegistry().register(blockItem);
 			
-			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY, 12422002, 5651507, new Item.Properties().tab(ItemGroup.TAB_MISC));
-			spawnEggItem.setRegistryName(EXAMPLE_ENTITY.getRegistryName());
+			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(ItemGroup.TAB_MISC));
+			spawnEggItem.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
 			event.getRegistry().register(spawnEggItem);
 		}
 		
 		@SubscribeEvent
 		public static void onEvent(final EntityAttributeCreationEvent event) {
-			event.put(EXAMPLE_ENTITY, ExampleEntity.createAttributes().build());
+			event.put(EXAMPLE_ENTITY_TYPE, ExampleEntity.createAttributes().build());
 		}
 	}
 	
@@ -128,12 +128,12 @@ public class Example {
 
 		@SubscribeEvent
 		public static void onEntityTypeRegistryEvent(final RegistryEvent.Register<EntityType<?>> event) {
-			EXAMPLE_ENTITY = EntityType.Builder.of(ExampleEntity::new, EntityClassification.MISC)
+			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, EntityClassification.MISC)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(10)
 					.build("mcgltf:example_entity");
-			EXAMPLE_ENTITY.setRegistryName(new ResourceLocation("mcgltf", "example_entity"));
-			event.getRegistry().register(EXAMPLE_ENTITY);
+			EXAMPLE_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_entity"));
+			event.getRegistry().register(EXAMPLE_ENTITY_TYPE);
 		}
 		
 		@SubscribeEvent
@@ -281,14 +281,14 @@ public class Example {
 			blockItem.setRegistryName(EXAMPLE_BLOCK.getRegistryName());
 			event.getRegistry().register(blockItem);
 			
-			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY, 12422002, 5651507, new Item.Properties().tab(ItemGroup.TAB_MISC));
+			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(ItemGroup.TAB_MISC));
 			spawnEggItem.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
 			event.getRegistry().register(spawnEggItem);
 		}
 
 		@SubscribeEvent
 		public static void onEvent(final EntityAttributeCreationEvent event) {
-			event.put(EXAMPLE_ENTITY, ExampleEntity.createAttributes().build());
+			event.put(EXAMPLE_ENTITY_TYPE, ExampleEntity.createAttributes().build());
 		}
 		
 		@SubscribeEvent
@@ -299,7 +299,7 @@ public class Example {
 				return ter;
 			});
 			
-			RenderingRegistry.registerEntityRenderingHandler(EXAMPLE_ENTITY, new IRenderFactory<ExampleEntity>() {
+			RenderingRegistry.registerEntityRenderingHandler(EXAMPLE_ENTITY_TYPE, new IRenderFactory<ExampleEntity>() {
 
 				@Override
 				public EntityRenderer<? super ExampleEntity> createRenderFor(EntityRendererManager manager) {
