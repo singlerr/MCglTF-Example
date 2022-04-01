@@ -1,12 +1,10 @@
 {
 	"homepage": "https://github.com/TimLee9024/MCglTF-Example/releases",
-	"1.16.5": {
-		"1.16.5-Forge-1.1.0.1": "Fix homepage URL and server side item registration",
-		"1.16.5-Forge-1.1.0.0": "Update to work with MCglTF version 1.16.5-Forge-1.1.0.0",
-		"1.16.5-Forge-1.0.0.0": "Initial release"
+	"1.18.2": {
+		"1.18.2-Forge-1.0.0.0": "Initial release"
 	},
 	"promos": {
-		"1.16.5-latest": "1.16.5-Forge-1.1.0.1",
-		"1.16.5-recommended": "1.16.5-Forge-1.1.0.1"
+		"1.18.2-latest": "1.18.2-Forge-1.0.0.0",
+		"1.18.2-recommended": "1.18.2-Forge-1.0.0.0"
 	}
 }

@@ -10,7 +10,9 @@ import de.javagl.jgltf.model.animation.Animation;
 
 public abstract class AbstractItemGltfModelReceiver implements IGltfModelReceiver {
 
-	public List<Runnable> vanillaCommands;
+	public Runnable vanillaSkinningCommands;
+	
+	public List<Runnable> vanillaRenderCommands;
 	
 	public List<Runnable> shaderModCommands;
 	
@@ -18,7 +20,8 @@ public abstract class AbstractItemGltfModelReceiver implements IGltfModelReceive
 	
 	@Override
 	public void onModelLoaded(RenderedGltfModel renderedModel) {
-		vanillaCommands = renderedModel.vanillaSceneCommands.get(0);
+		vanillaSkinningCommands = renderedModel.vanillaSceneSkinningCommands.get(0);
+		vanillaRenderCommands = renderedModel.vanillaSceneRenderCommands.get(0);
 		shaderModCommands = renderedModel.shaderModSceneCommands.get(0);
 		animations = GltfAnimations.createModelAnimations(renderedModel.gltfModel.getAnimationModels());
 	}

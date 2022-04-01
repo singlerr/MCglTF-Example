@@ -23,12 +23,13 @@ import de.javagl.jgltf.model.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 
-public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> implements IGltfModelReceiver {
+public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEntityRenderer<ExampleBlockEntity> {
 
 	protected Runnable vanillaSkinningCommands;
 	
@@ -38,13 +39,9 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 	
 	protected List<Animation> animations;
 	
-	protected ExampleEntityRenderer(Context p_174008_) {
-		super(p_174008_);
-	}
-
 	@Override
 	public ResourceLocation getModelLocation() {
-		return new ResourceLocation("mcgltf", "models/entity/cesium_man.gltf");
+		return new ResourceLocation("mcgltf", "models/block/boom_box.gltf");
 	}
 
 	@Override
@@ -55,16 +52,14 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		animations = GltfAnimations.createModelAnimations(renderedModel.gltfModel.getAnimationModels());
 	}
 
+	/**
+	 * Since you use custom BEWLR for BlockItem instead of BER, the last parameters p_112312_ which control overlay color is almost unused.
+	 */
 	@Override
-	public ResourceLocation getTextureLocation(ExampleEntity p_114482_) {
-		return null;
-	}
-
-	@Override
-	public void render(ExampleEntity p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
+	public void render(ExampleBlockEntity p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
 		Minecraft mc = Minecraft.getInstance();
 		for(Animation animation : animations) {
-			animation.update((mc.level.getGameTime() + p_114487_) / 20 % animation.getEndTimeS());
+			animation.update((mc.level.getGameTime() + p_112308_) / 20 % animation.getEndTimeS());
 		}
 		
 		int currentVAO = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
@@ -79,13 +74,34 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		GL11.glEnable(GL11.GL_BLEND);
 		GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		p_114488_.pushPose();
-		p_114488_.mulPose(new Quaternion(0.0F, Mth.rotLerp(p_114487_, p_114485_.yBodyRotO, p_114485_.yBodyRot), 0.0F, true));
-		MCglTF.CURRENT_POSE = p_114488_.last().pose();
-		MCglTF.CURRENT_NORMAL = p_114488_.last().normal();
-		p_114488_.popPose();
+		p_112309_.pushPose();
+		Level level = p_112307_.getLevel();
+		if(level != null) {
+			p_112309_.translate(0.5, 0.5, 0.5); //Make sure it is in the center of the block
+			switch(level.getBlockState(p_112307_.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
+			case DOWN:
+				break;
+			case UP:
+				break;
+			case NORTH:
+				break;
+			case SOUTH:
+				p_112309_.mulPose(new Quaternion(0.0F, 1.0F, 0.0F, 0.0F));
+				break;
+			case WEST:
+				p_112309_.mulPose(new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F));
+				break;
+			case EAST:
+				p_112309_.mulPose(new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F));
+				break;
+			}
+		}
 		
-		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_114490_ & '\uffff', p_114490_ >> 16 & '\uffff');
+		MCglTF.CURRENT_POSE = p_112309_.last().pose();
+		MCglTF.CURRENT_NORMAL = p_112309_.last().normal();
+		p_112309_.popPose();
+		
+		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_112311_ & '\uffff', p_112311_ >> 16 & '\uffff');
 		
 		MCglTF.CURRENT_PROGRAM = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
 		if(MCglTF.CURRENT_PROGRAM == 0) {
@@ -139,7 +155,6 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		GL30.glBindVertexArray(currentVAO);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, currentArrayBuffer);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, currentElementArrayBuffer);
-		super.render(p_114485_, p_114486_, p_114487_, p_114488_, p_114489_, p_114490_);
 	}
 	
 	private void renderWithVanillaCommands() {

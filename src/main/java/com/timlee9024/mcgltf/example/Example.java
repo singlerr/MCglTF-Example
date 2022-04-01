@@ -1,49 +1,56 @@
 package com.timlee9024.mcgltf.example;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
+import java.util.function.Consumer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import com.timlee9024.mcgltf.MCglTF;
+import com.timlee9024.mcgltf.RenderedGltfModel;
 
 import de.javagl.jgltf.model.animation.Animation;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod("example_mcgltf_usage")
 public class Example {
 
 	public static ExampleBlock EXAMPLE_BLOCK;
-	public static TileEntityType<ExampleTileEntity> EXAMPLE_TILE_ENTITY_TYPE;
+	public static BlockEntityType<ExampleBlockEntity> EXAMPLE_BLOCK_ENTITY_TYPE;
 	public static EntityType<ExampleEntity> EXAMPLE_ENTITY_TYPE;
 	
 	@Mod.EventBusSubscriber(value = Dist.DEDICATED_SERVER, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -51,27 +58,21 @@ public class Example {
 		
 		@SubscribeEvent
 		public static void onBlockRegistryEvent(final RegistryEvent.Register<Block> event) {
-			EXAMPLE_BLOCK = new ExampleBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.3F)
-					.sound(SoundType.STONE)
-					.noOcclusion()
-					.isValidSpawn((a, b, c, d) -> false)
-					.isRedstoneConductor((a, b, c) -> false)
-					.isSuffocating((a, b, c) -> false)
-					.isViewBlocking((a, b, c) -> false));
+			EXAMPLE_BLOCK = new ExampleBlock(BlockBehaviour.Properties.of(Material.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().isValidSpawn((a, b, c, d) -> false).isRedstoneConductor((a, b, c) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
 			EXAMPLE_BLOCK.setRegistryName(new ResourceLocation("mcgltf", "example_block"));
 			event.getRegistry().register(EXAMPLE_BLOCK);
 		}
 		
 		@SubscribeEvent
-		public static void onTileEntityTypeRegistryEvent(final RegistryEvent.Register<TileEntityType<?>> event) {
-			EXAMPLE_TILE_ENTITY_TYPE = TileEntityType.Builder.of(ExampleTileEntity::new, EXAMPLE_BLOCK).build(null);
-			EXAMPLE_TILE_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_tileentity"));
-			event.getRegistry().register(EXAMPLE_TILE_ENTITY_TYPE);
+		public static void onBlockEntityTypeRegistryEvent(final RegistryEvent.Register<BlockEntityType<?>> event) {
+			EXAMPLE_BLOCK_ENTITY_TYPE = BlockEntityType.Builder.of(ExampleBlockEntity::new, EXAMPLE_BLOCK).build(null);
+			EXAMPLE_BLOCK_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_blockentity"));
+			event.getRegistry().register(EXAMPLE_BLOCK_ENTITY_TYPE);
 		}
-
+		
 		@SubscribeEvent
 		public static void onEntityTypeRegistryEvent(final RegistryEvent.Register<EntityType<?>> event) {
-			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, EntityClassification.MISC)
+			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, MobCategory.MISC)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(10)
 					.build("mcgltf:example_entity");
@@ -81,15 +82,15 @@ public class Example {
 		
 		@SubscribeEvent
 		public static void onItemRegistryEvent(final RegistryEvent.Register<Item> event) {
-			Item item = new Item(new Item.Properties().tab(ItemGroup.TAB_MISC));
+			Item item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC));
 			item.setRegistryName(new ResourceLocation("mcgltf", "example_item"));
 			event.getRegistry().register(item);
 			
-			BlockItem blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(ItemGroup.TAB_MISC));
-			item.setRegistryName(EXAMPLE_BLOCK.getRegistryName());
+			BlockItem blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
+			item.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
 			event.getRegistry().register(blockItem);
 			
-			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(ItemGroup.TAB_MISC));
+			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
 			spawnEggItem.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
 			event.getRegistry().register(spawnEggItem);
 		}
@@ -105,30 +106,24 @@ public class Example {
 
 		private static Item item;
 		private static BlockItem blockItem;
-
+		
 		@SubscribeEvent
 		public static void onBlockRegistryEvent(final RegistryEvent.Register<Block> event) {
-			EXAMPLE_BLOCK = new ExampleBlock(AbstractBlock.Properties.of(Material.STONE).strength(0.3F)
-					.sound(SoundType.STONE)
-					.noOcclusion()
-					.isValidSpawn((a, b, c, d) -> false)
-					.isRedstoneConductor((a, b, c) -> false)
-					.isSuffocating((a, b, c) -> false)
-					.isViewBlocking((a, b, c) -> false));
+			EXAMPLE_BLOCK = new ExampleBlock(BlockBehaviour.Properties.of(Material.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().isValidSpawn((a, b, c, d) -> false).isRedstoneConductor((a, b, c) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
 			EXAMPLE_BLOCK.setRegistryName(new ResourceLocation("mcgltf", "example_block"));
 			event.getRegistry().register(EXAMPLE_BLOCK);
 		}
 		
 		@SubscribeEvent
-		public static void onTileEntityTypeRegistryEvent(final RegistryEvent.Register<TileEntityType<?>> event) {
-			EXAMPLE_TILE_ENTITY_TYPE = TileEntityType.Builder.of(ExampleTileEntity::new, EXAMPLE_BLOCK).build(null);
-			EXAMPLE_TILE_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_tileentity"));
-			event.getRegistry().register(EXAMPLE_TILE_ENTITY_TYPE);
+		public static void onBlockEntityTypeRegistryEvent(final RegistryEvent.Register<BlockEntityType<?>> event) {
+			EXAMPLE_BLOCK_ENTITY_TYPE = BlockEntityType.Builder.of(ExampleBlockEntity::new, EXAMPLE_BLOCK).build(null);
+			EXAMPLE_BLOCK_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_blockentity"));
+			event.getRegistry().register(EXAMPLE_BLOCK_ENTITY_TYPE);
 		}
 
 		@SubscribeEvent
 		public static void onEntityTypeRegistryEvent(final RegistryEvent.Register<EntityType<?>> event) {
-			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, EntityClassification.MISC)
+			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, MobCategory.MISC)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(10)
 					.build("mcgltf:example_entity");
@@ -157,159 +152,338 @@ public class Example {
 			MCglTF.getInstance().addGltfModelReceiver(blockItemModelReceiver);
 			
 			//According to Forge Doc "Each mod should only have one instance of a custom TEISR/ISTER/BEWLR.", due to creating an instance will also initiate unused fields inside the class which waste a lots of memory.
-			ItemStackTileEntityRenderer ister = new ItemStackTileEntityRenderer() {
+			IItemRenderProperties renderProperties = new IItemRenderProperties() {
 
 				@Override
-				public void renderByItem(ItemStack p_239207_1_, TransformType p_239207_2_, MatrixStack p_239207_3_, IRenderTypeBuffer p_239207_4_, int p_239207_5_, int p_239207_6_) {
-					GL11.glPushMatrix();
-					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-					
-					GL11.glEnable(GL11.GL_LIGHTING);
-					GL11.glShadeModel(GL11.GL_SMOOTH);
-					GL11.glEnable(GL11.GL_COLOR_MATERIAL);
-					
-					RenderSystem.multMatrix(p_239207_3_.last().pose());
-					
-					switch(p_239207_2_) {
-					case THIRD_PERSON_LEFT_HAND:
-					case THIRD_PERSON_RIGHT_HAND:
-					case HEAD:
-						GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-						GL11.glEnable(GL11.GL_DEPTH_TEST);
-						GL11.glEnable(GL11.GL_BLEND);
-						GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+					return new BlockEntityWithoutLevelRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()) {
+
+						@Override
+						public void renderByItem(ItemStack p_108830_, TransformType p_108831_, PoseStack p_108832_, MultiBufferSource p_108833_, int p_108834_, int p_108835_) {
+							int currentVAO = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
+							int currentArrayBuffer = GL11.glGetInteger(GL15.GL_ARRAY_BUFFER_BINDING);
+							int currentElementArrayBuffer = GL11.glGetInteger(GL15.GL_ELEMENT_ARRAY_BUFFER_BINDING);
+							
+							boolean currentCullFace = GL11.glGetBoolean(GL11.GL_CULL_FACE);
+							
+							switch(p_108831_) {
+							case THIRD_PERSON_LEFT_HAND:
+							case THIRD_PERSON_RIGHT_HAND:
+							case HEAD:
+								boolean currentDepthTest = GL11.glGetBoolean(GL11.GL_DEPTH_TEST);
+								boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
+								GL11.glEnable(GL11.GL_DEPTH_TEST);
+								GL11.glEnable(GL11.GL_BLEND);
+								GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+								
+								MCglTF.CURRENT_POSE = p_108832_.last().pose();
+								MCglTF.CURRENT_NORMAL = p_108832_.last().normal();
+								
+								GL30.glVertexAttribI2i(RenderedGltfModel.vaUV1, p_108835_ & '\uffff', p_108835_ >> 16 & '\uffff');
+								GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_108834_ & '\uffff', p_108834_ >> 16 & '\uffff');
+								
+								MCglTF.CURRENT_PROGRAM = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+								if(MCglTF.CURRENT_PROGRAM == 0) { //When Optifine is not installed or shader is setting to "internal"
+									renderLightOverlayTextureWithVanillaCommands(p_108830_);
+									GL20.glUseProgram(0);
+								}
+								else {
+									MCglTF.MODEL_VIEW_MATRIX = GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "modelViewMatrix");
+									if(MCglTF.MODEL_VIEW_MATRIX == -1) { //When Optifine is installed and shader is setting to "none"
+										int currentProgram = MCglTF.CURRENT_PROGRAM;
+										renderLightOverlayTextureWithVanillaCommands(p_108830_);
+										GL20.glUseProgram(currentProgram);
+									}
+									else {
+										renderWithShaderModCommands(p_108830_);
+									}
+								}
+								
+								GL30.glVertexAttribI2i(RenderedGltfModel.vaUV1, 0, 0);
+								GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, 0, 0);
+								
+								if(!currentDepthTest) GL11.glDisable(GL11.GL_DEPTH_TEST);
+								if(!currentBlend) GL11.glDisable(GL11.GL_BLEND);
+								break;
+							case FIRST_PERSON_LEFT_HAND:
+							case FIRST_PERSON_RIGHT_HAND:
+							case GROUND:
+							case FIXED:
+								currentDepthTest = GL11.glGetBoolean(GL11.GL_DEPTH_TEST);
+								currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
+								GL11.glEnable(GL11.GL_DEPTH_TEST);
+								GL11.glEnable(GL11.GL_BLEND);
+								GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+								
+								MCglTF.CURRENT_POSE = p_108832_.last().pose();
+								MCglTF.CURRENT_NORMAL = p_108832_.last().normal();
+								
+								GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_108834_ & '\uffff', p_108834_ >> 16 & '\uffff');
+								
+								MCglTF.CURRENT_PROGRAM = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+								if(MCglTF.CURRENT_PROGRAM == 0) {
+									renderLightTextureWithVanillaCommands(p_108830_);
+									GL20.glUseProgram(0);
+								}
+								else {
+									MCglTF.MODEL_VIEW_MATRIX = GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "modelViewMatrix");
+									if(MCglTF.MODEL_VIEW_MATRIX == -1) {
+										int currentProgram = MCglTF.CURRENT_PROGRAM;
+										renderLightTextureWithVanillaCommands(p_108830_);
+										GL20.glUseProgram(currentProgram);
+									}
+									else {
+										renderWithShaderModCommands(p_108830_);
+									}
+								}
+								
+								GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, 0, 0);
+								
+								if(!currentDepthTest) GL11.glDisable(GL11.GL_DEPTH_TEST);
+								if(!currentBlend) GL11.glDisable(GL11.GL_BLEND);
+								break;
+							case GUI:
+								Quaternion rotateAround = new Quaternion(0.0F, 1.0F, 0.0F, 0.0F);
+								MCglTF.CURRENT_POSE = RenderSystem.getModelViewMatrix().copy();
+								MCglTF.CURRENT_POSE.multiply(rotateAround);
+								MCglTF.CURRENT_NORMAL = new Matrix3f();
+								MCglTF.CURRENT_NORMAL.setIdentity();
+								MCglTF.CURRENT_NORMAL.mul(rotateAround);
+								
+								int currentProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+								
+								GL13.glActiveTexture(GL13.GL_TEXTURE2);
+								int currentTexture2 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+								GL11.glBindTexture(GL11.GL_TEXTURE_2D, MCglTF.getInstance().getDefaultColorMap());
+								
+								GL13.glActiveTexture(GL13.GL_TEXTURE1);
+								int currentTexture1 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+								GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+								
+								GL13.glActiveTexture(GL13.GL_TEXTURE0);
+								int currentTexture0 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+								
+								renderWithVanillaCommands(p_108830_);
+								
+								GL13.glActiveTexture(GL13.GL_TEXTURE2);
+								GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture2);
+								GL13.glActiveTexture(GL13.GL_TEXTURE1);
+								GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture1);
+								GL13.glActiveTexture(GL13.GL_TEXTURE0);
+								GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture0);
+								
+								GL20.glUseProgram(currentProgram);
+								break;
+							default:
+								break;
+							}
+							
+							if(currentCullFace) GL11.glEnable(GL11.GL_CULL_FACE);
+							else GL11.glDisable(GL11.GL_CULL_FACE);
+							
+							GL30.glBindVertexArray(currentVAO);
+							GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, currentArrayBuffer);
+							GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, currentElementArrayBuffer);
+						}
 						
-						GL13.glMultiTexCoord2s(GL13.GL_TEXTURE1, (short)(p_239207_6_ & '\uffff'), (short)(p_239207_6_ >> 16 & '\uffff'));
-						GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_239207_5_ & '\uffff'), (short)(p_239207_5_ >> 16 & '\uffff'));
-						
-						MCglTF.CURRENT_PROGRAM = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
-						if(MCglTF.CURRENT_PROGRAM == 0) {
+						private void renderLightTextureWithVanillaCommands(ItemStack itemStack) {
+							GL13.glActiveTexture(GL13.GL_TEXTURE2);
+							int currentTexture2 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, MCglTF.getInstance().getLightTexture().getId());
+							
 							GL13.glActiveTexture(GL13.GL_TEXTURE1);
-							GL11.glEnable(GL11.GL_TEXTURE_2D);
-							GL13.glActiveTexture(GL13.GL_TEXTURE2);
-							GL11.glEnable(GL11.GL_TEXTURE_2D);
-							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							int currentTexture1 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 							
-							renderWithVanillaCommands(p_239207_1_);
-						}
-						else {
-							renderWithShaderModCommands(p_239207_1_);
-						}
-						break;
-					case FIRST_PERSON_LEFT_HAND:
-					case FIRST_PERSON_RIGHT_HAND:
-					case GROUND:
-					case FIXED:
-						GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-						GL11.glEnable(GL11.GL_DEPTH_TEST);
-						GL11.glEnable(GL11.GL_BLEND);
-						GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-						
-						GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_239207_5_ & '\uffff'), (short)(p_239207_5_ >> 16 & '\uffff'));
-						
-						MCglTF.CURRENT_PROGRAM = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
-						if(MCglTF.CURRENT_PROGRAM == 0) {
-							GL13.glActiveTexture(GL13.GL_TEXTURE2);
-							GL11.glEnable(GL11.GL_TEXTURE_2D);
 							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							int currentTexture0 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
 							
-							renderWithVanillaCommands(p_239207_1_);
+							renderWithVanillaCommands(itemStack);
+							
+							GL13.glActiveTexture(GL13.GL_TEXTURE2);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture2);
+							GL13.glActiveTexture(GL13.GL_TEXTURE1);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture1);
+							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture0);
 						}
-						else {
-							renderWithShaderModCommands(p_239207_1_);
+						
+						private void renderLightOverlayTextureWithVanillaCommands(ItemStack itemStack) {
+							GL13.glActiveTexture(GL13.GL_TEXTURE2);
+							int currentTexture2 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, MCglTF.getInstance().getLightTexture().getId());
+							
+							GL13.glActiveTexture(GL13.GL_TEXTURE1);
+							int currentTexture1 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							Minecraft mc = Minecraft.getInstance();
+							mc.gameRenderer.overlayTexture().setupOverlayColor();
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, RenderSystem.getShaderTexture(1));
+							mc.gameRenderer.overlayTexture().teardownOverlayColor();
+							
+							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							int currentTexture0 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							
+							renderWithVanillaCommands(itemStack);
+							
+							GL13.glActiveTexture(GL13.GL_TEXTURE2);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture2);
+							GL13.glActiveTexture(GL13.GL_TEXTURE1);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture1);
+							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture0);
 						}
-						break;
-					default:
-						MCglTF.CURRENT_PROGRAM = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
-						if(MCglTF.CURRENT_PROGRAM == 0) {
-							renderWithVanillaCommands(p_239207_1_);
+						
+						private void renderWithVanillaCommands(ItemStack itemStack) {
+							Item currentItem = itemStack.getItem();
+							if(currentItem == item) {
+								Minecraft mc = Minecraft.getInstance();
+								for(Animation animation : itemModelReceiver.animations) {
+									animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+								}
+								itemModelReceiver.vanillaSkinningCommands.run();
+								
+								setupVanillaShader();
+								
+								itemModelReceiver.vanillaRenderCommands.forEach((command) -> command.run());
+							}
+							else if(currentItem == blockItem) {
+								Minecraft mc = Minecraft.getInstance();
+								for(Animation animation : blockItemModelReceiver.animations) {
+									animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+								}
+								blockItemModelReceiver.vanillaSkinningCommands.run();
+								
+								setupVanillaShader();
+								
+								blockItemModelReceiver.vanillaRenderCommands.forEach((command) -> command.run());
+							}
 						}
-						else {
-							renderWithShaderModCommands(p_239207_1_);
+						
+						private void setupVanillaShader() {
+							MCglTF.CURRENT_SHADER_INSTANCE = GameRenderer.getRendertypeEntitySolidShader();
+							MCglTF.CURRENT_PROGRAM = MCglTF.CURRENT_SHADER_INSTANCE.getId();
+							GL20.glUseProgram(MCglTF.CURRENT_PROGRAM);
+							
+							MCglTF.CURRENT_SHADER_INSTANCE.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
+							MCglTF.CURRENT_SHADER_INSTANCE.PROJECTION_MATRIX.upload();
+							
+							MCglTF.CURRENT_SHADER_INSTANCE.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
+							MCglTF.CURRENT_SHADER_INSTANCE.INVERSE_VIEW_ROTATION_MATRIX.upload();
+							
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_START.set(RenderSystem.getShaderFogStart());
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_START.upload();
+							
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_END.set(RenderSystem.getShaderFogEnd());
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_END.upload();
+							
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_COLOR.set(RenderSystem.getShaderFogColor());
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_COLOR.upload();
+							
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
+							MCglTF.CURRENT_SHADER_INSTANCE.FOG_SHAPE.upload();
+							
+							MCglTF.CURRENT_SHADER_INSTANCE.COLOR_MODULATOR.set(1.0F, 1.0F, 1.0F, 1.0F);
+							MCglTF.CURRENT_SHADER_INSTANCE.COLOR_MODULATOR.upload();
+							
+							GL20.glUniform1i(GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "Sampler0"), 0);
+							GL20.glUniform1i(GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "Sampler1"), 1);
+							GL20.glUniform1i(GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "Sampler2"), 2);
+							
+							RenderSystem.setupShaderLights(MCglTF.CURRENT_SHADER_INSTANCE);
+							MCglTF.LIGHT0_DIRECTION = new Vector3f(MCglTF.CURRENT_SHADER_INSTANCE.LIGHT0_DIRECTION.getFloatBuffer().get(0), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT0_DIRECTION.getFloatBuffer().get(1), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT0_DIRECTION.getFloatBuffer().get(2));
+							MCglTF.LIGHT1_DIRECTION = new Vector3f(MCglTF.CURRENT_SHADER_INSTANCE.LIGHT1_DIRECTION.getFloatBuffer().get(0), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT1_DIRECTION.getFloatBuffer().get(1), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT1_DIRECTION.getFloatBuffer().get(2));
 						}
-						break;
-					}
-					
-					GL11.glPopAttrib();
-					GL11.glPopMatrix();
-				}
-				
-				private void renderWithVanillaCommands(ItemStack itemStack) {
-					Item currentItem = itemStack.getItem();
-					if(currentItem == item) {
-						Minecraft mc = Minecraft.getInstance();
-						//Play every animation clips simultaneously
-						for(Animation animation : itemModelReceiver.animations) {
-							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
+						
+						private void renderWithShaderModCommands(ItemStack itemStack) {
+							MCglTF.MODEL_VIEW_MATRIX_INVERSE = GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "modelViewMatrixInverse");
+							MCglTF.NORMAL_MATRIX = GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "normalMatrix");
+							
+							RenderSystem.getProjectionMatrix().store(MCglTF.BUF_FLOAT_16);
+							GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "projectionMatrix"), false, MCglTF.BUF_FLOAT_16);
+							Matrix4f projectionMatrixInverse = RenderSystem.getProjectionMatrix().copy();
+							projectionMatrixInverse.invert();
+							projectionMatrixInverse.store(MCglTF.BUF_FLOAT_16);
+							GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(MCglTF.CURRENT_PROGRAM, "projectionMatrixInverse"), false, MCglTF.BUF_FLOAT_16);
+							
+							GL13.glActiveTexture(GL13.GL_TEXTURE3);
+							int currentTexture3 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							GL13.glActiveTexture(GL13.GL_TEXTURE1);
+							int currentTexture1 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							int currentTexture0 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+							
+							Item currentItem = itemStack.getItem();
+							if(currentItem == item) {
+								Minecraft mc = Minecraft.getInstance();
+								for(Animation animation : itemModelReceiver.animations) {
+									animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+								}
+								itemModelReceiver.shaderModCommands.forEach((command) -> command.run());
+							}
+							else if(currentItem == blockItem) {
+								Minecraft mc = Minecraft.getInstance();
+								for(Animation animation : blockItemModelReceiver.animations) {
+									animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+								}
+								blockItemModelReceiver.shaderModCommands.forEach((command) -> command.run());
+							}
+							
+							GL13.glActiveTexture(GL13.GL_TEXTURE3);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture3);
+							GL13.glActiveTexture(GL13.GL_TEXTURE1);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture1);
+							GL13.glActiveTexture(GL13.GL_TEXTURE0);
+							GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture0);
 						}
-						itemModelReceiver.vanillaCommands.forEach((command) -> command.run());
-					}
-					else if(currentItem == blockItem) {
-						Minecraft mc = Minecraft.getInstance();
-						for(Animation animation : blockItemModelReceiver.animations) {
-							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
-						}
-						blockItemModelReceiver.vanillaCommands.forEach((command) -> command.run());
-					}
-				}
-				
-				private void renderWithShaderModCommands(ItemStack itemStack) {
-					Item currentItem = itemStack.getItem();
-					if(currentItem == item) {
-						Minecraft mc = Minecraft.getInstance();
-						for(Animation animation : itemModelReceiver.animations) {
-							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
-						}
-						itemModelReceiver.shaderModCommands.forEach((command) -> command.run());
-					}
-					else if(currentItem == blockItem) {
-						Minecraft mc = Minecraft.getInstance();
-						for(Animation animation : blockItemModelReceiver.animations) {
-							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
-						}
-						blockItemModelReceiver.shaderModCommands.forEach((command) -> command.run());
-					}
+					};
 				}
 				
 			};
 			
-			item = new Item(new Item.Properties().tab(ItemGroup.TAB_MISC).setISTER(() -> () -> ister));
+			item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+
+				@Override
+				public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+					consumer.accept(renderProperties);
+				}
+				
+			};
 			item.setRegistryName(new ResourceLocation("mcgltf", "example_item"));
 			event.getRegistry().register(item);
 			
-			blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(ItemGroup.TAB_MISC).setISTER(() -> () -> ister));
+			blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+
+				@Override
+				public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+					consumer.accept(renderProperties);
+				}
+				
+			};
 			blockItem.setRegistryName(EXAMPLE_BLOCK.getRegistryName());
 			event.getRegistry().register(blockItem);
 			
-			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(ItemGroup.TAB_MISC));
+			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
 			spawnEggItem.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
 			event.getRegistry().register(spawnEggItem);
 		}
-
+		
 		@SubscribeEvent
 		public static void onEvent(final EntityAttributeCreationEvent event) {
 			event.put(EXAMPLE_ENTITY_TYPE, ExampleEntity.createAttributes().build());
 		}
 		
 		@SubscribeEvent
-		public static void onEvent(final FMLClientSetupEvent event) {
-			ClientRegistry.bindTileEntityRenderer(EXAMPLE_TILE_ENTITY_TYPE, (dispatcher) -> {
-				ExampleTileEntityRenderer ter = new ExampleTileEntityRenderer(dispatcher);
-				MCglTF.getInstance().addGltfModelReceiver(ter);
-				return ter;
+		public static void onEvent(final EntityRenderersEvent.RegisterRenderers event) {
+			event.registerBlockEntityRenderer(EXAMPLE_BLOCK_ENTITY_TYPE, (context) -> {
+				ExampleBlockEntityRenderer ber = new ExampleBlockEntityRenderer();
+				MCglTF.getInstance().addGltfModelReceiver(ber);
+				return ber;
 			});
-			
-			RenderingRegistry.registerEntityRenderingHandler(EXAMPLE_ENTITY_TYPE, new IRenderFactory<ExampleEntity>() {
-
-				@Override
-				public EntityRenderer<? super ExampleEntity> createRenderFor(EntityRendererManager manager) {
-					ExampleEntityRenderer entityRenderer = new ExampleEntityRenderer(manager);
-					MCglTF.getInstance().addGltfModelReceiver(entityRenderer);
-					return entityRenderer;
-				}
-				
+			event.registerEntityRenderer(EXAMPLE_ENTITY_TYPE, (context) -> {
+				ExampleEntityRenderer entityRenderer = new ExampleEntityRenderer(context);
+				MCglTF.getInstance().addGltfModelReceiver(entityRenderer);
+				return entityRenderer;
 			});
 		}
 	}
-
 }
