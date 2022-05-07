@@ -162,13 +162,14 @@ public class Example {
 					
 					boolean currentCullFace = GL11.glGetBoolean(GL11.GL_CULL_FACE);
 					
+					boolean currentDepthTest = GL11.glGetBoolean(GL11.GL_DEPTH_TEST);
+					GL11.glEnable(GL11.GL_DEPTH_TEST);
+					
 					switch(p_108831_) {
 					case THIRD_PERSON_LEFT_HAND:
 					case THIRD_PERSON_RIGHT_HAND:
 					case HEAD:
-						boolean currentDepthTest = GL11.glGetBoolean(GL11.GL_DEPTH_TEST);
 						boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
-						GL11.glEnable(GL11.GL_DEPTH_TEST);
 						GL11.glEnable(GL11.GL_BLEND);
 						GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 						
@@ -198,16 +199,13 @@ public class Example {
 						GL30.glVertexAttribI2i(RenderedGltfModel.vaUV1, 0, 0);
 						GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, 0, 0);
 						
-						if(!currentDepthTest) GL11.glDisable(GL11.GL_DEPTH_TEST);
 						if(!currentBlend) GL11.glDisable(GL11.GL_BLEND);
 						break;
 					case FIRST_PERSON_LEFT_HAND:
 					case FIRST_PERSON_RIGHT_HAND:
 					case GROUND:
 					case FIXED:
-						currentDepthTest = GL11.glGetBoolean(GL11.GL_DEPTH_TEST);
 						currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
-						GL11.glEnable(GL11.GL_DEPTH_TEST);
 						GL11.glEnable(GL11.GL_BLEND);
 						GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 						
@@ -235,7 +233,6 @@ public class Example {
 						
 						GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, 0, 0);
 						
-						if(!currentDepthTest) GL11.glDisable(GL11.GL_DEPTH_TEST);
 						if(!currentBlend) GL11.glDisable(GL11.GL_BLEND);
 						break;
 					case GUI:
@@ -273,6 +270,8 @@ public class Example {
 					default:
 						break;
 					}
+					
+					if(!currentDepthTest) GL11.glDisable(GL11.GL_DEPTH_TEST);
 					
 					if(currentCullFace) GL11.glEnable(GL11.GL_CULL_FACE);
 					else GL11.glDisable(GL11.GL_CULL_FACE);
