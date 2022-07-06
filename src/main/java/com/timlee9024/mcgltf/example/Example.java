@@ -31,7 +31,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -41,10 +40,11 @@ import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 @Mod("example_mcgltf_usage")
 public class Example {
@@ -57,46 +57,34 @@ public class Example {
 	public static class Server {
 		
 		@SubscribeEvent
-		public static void onBlockRegistryEvent(final RegistryEvent.Register<Block> event) {
-			EXAMPLE_BLOCK = new ExampleBlock(BlockBehaviour.Properties.of(Material.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().isValidSpawn((a, b, c, d) -> false).isRedstoneConductor((a, b, c) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
-			EXAMPLE_BLOCK.setRegistryName(new ResourceLocation("mcgltf", "example_block"));
-			event.getRegistry().register(EXAMPLE_BLOCK);
-		}
-		
-		@SubscribeEvent
-		public static void onBlockEntityTypeRegistryEvent(final RegistryEvent.Register<BlockEntityType<?>> event) {
-			EXAMPLE_BLOCK_ENTITY_TYPE = BlockEntityType.Builder.of(ExampleBlockEntity::new, EXAMPLE_BLOCK).build(null);
-			EXAMPLE_BLOCK_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_blockentity"));
-			event.getRegistry().register(EXAMPLE_BLOCK_ENTITY_TYPE);
-		}
-		
-		@SubscribeEvent
-		public static void onEntityTypeRegistryEvent(final RegistryEvent.Register<EntityType<?>> event) {
-			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, MobCategory.MISC)
-					.sized(0.6F, 1.95F)
-					.clientTrackingRange(10)
-					.build("mcgltf:example_entity");
-			EXAMPLE_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_entity"));
-			event.getRegistry().register(EXAMPLE_ENTITY_TYPE);
-		}
-		
-		@SubscribeEvent
-		public static void onItemRegistryEvent(final RegistryEvent.Register<Item> event) {
-			Item item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-			item.setRegistryName(new ResourceLocation("mcgltf", "example_item"));
-			event.getRegistry().register(item);
+		public static void onEvent(RegisterEvent event) {
+			event.register(ForgeRegistries.Keys.BLOCKS, helper -> {
+				EXAMPLE_BLOCK = new ExampleBlock(BlockBehaviour.Properties.of(Material.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().isValidSpawn((a, b, c, d) -> false).isRedstoneConductor((a, b, c) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
+				helper.register(new ResourceLocation("mcgltf", "example_block"), EXAMPLE_BLOCK);
+			});
 			
-			BlockItem blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-			item.setRegistryName(EXAMPLE_BLOCK.getRegistryName());
-			event.getRegistry().register(blockItem);
+			event.register(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES, helper -> {
+				EXAMPLE_BLOCK_ENTITY_TYPE = BlockEntityType.Builder.of(ExampleBlockEntity::new, EXAMPLE_BLOCK).build(null);
+				helper.register(new ResourceLocation("mcgltf", "example_blockentity"), EXAMPLE_BLOCK_ENTITY_TYPE);
+			});
 			
-			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-			spawnEggItem.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
-			event.getRegistry().register(spawnEggItem);
+			event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
+				EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, MobCategory.MISC)
+						.sized(0.6F, 1.95F)
+						.clientTrackingRange(10)
+						.build("mcgltf:example_entity");
+				helper.register(new ResourceLocation("mcgltf", "example_entity"), EXAMPLE_ENTITY_TYPE);
+			});
+			
+			event.register(ForgeRegistries.Keys.ITEMS, helper -> {
+				helper.register(new ResourceLocation("mcgltf", "example_item"), new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+				helper.register(new ResourceLocation("mcgltf", "example_block"), new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+			});
 		}
 		
 		@SubscribeEvent
-		public static void onEvent(final EntityAttributeCreationEvent event) {
+		public static void onEvent(EntityAttributeCreationEvent event) {
 			event.put(EXAMPLE_ENTITY_TYPE, ExampleEntity.createAttributes().build());
 		}
 	}
@@ -108,31 +96,25 @@ public class Example {
 		private static BlockItem blockItem;
 		
 		@SubscribeEvent
-		public static void onBlockRegistryEvent(final RegistryEvent.Register<Block> event) {
-			EXAMPLE_BLOCK = new ExampleBlock(BlockBehaviour.Properties.of(Material.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().isValidSpawn((a, b, c, d) -> false).isRedstoneConductor((a, b, c) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
-			EXAMPLE_BLOCK.setRegistryName(new ResourceLocation("mcgltf", "example_block"));
-			event.getRegistry().register(EXAMPLE_BLOCK);
-		}
-		
-		@SubscribeEvent
-		public static void onBlockEntityTypeRegistryEvent(final RegistryEvent.Register<BlockEntityType<?>> event) {
-			EXAMPLE_BLOCK_ENTITY_TYPE = BlockEntityType.Builder.of(ExampleBlockEntity::new, EXAMPLE_BLOCK).build(null);
-			EXAMPLE_BLOCK_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_blockentity"));
-			event.getRegistry().register(EXAMPLE_BLOCK_ENTITY_TYPE);
-		}
-
-		@SubscribeEvent
-		public static void onEntityTypeRegistryEvent(final RegistryEvent.Register<EntityType<?>> event) {
-			EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, MobCategory.MISC)
-					.sized(0.6F, 1.95F)
-					.clientTrackingRange(10)
-					.build("mcgltf:example_entity");
-			EXAMPLE_ENTITY_TYPE.setRegistryName(new ResourceLocation("mcgltf", "example_entity"));
-			event.getRegistry().register(EXAMPLE_ENTITY_TYPE);
-		}
-		
-		@SubscribeEvent
-		public static void onItemRegistryEvent(final RegistryEvent.Register<Item> event) {
+		public static void onEvent(RegisterEvent event) {
+			event.register(ForgeRegistries.Keys.BLOCKS, helper -> {
+				EXAMPLE_BLOCK = new ExampleBlock(BlockBehaviour.Properties.of(Material.STONE).strength(0.3F).sound(SoundType.STONE).noOcclusion().isValidSpawn((a, b, c, d) -> false).isRedstoneConductor((a, b, c) -> false).isSuffocating((a, b, c) -> false).isViewBlocking((a, b, c) -> false));
+				helper.register(new ResourceLocation("mcgltf", "example_block"), EXAMPLE_BLOCK);
+			});
+			
+			event.register(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES, helper -> {
+				EXAMPLE_BLOCK_ENTITY_TYPE = BlockEntityType.Builder.of(ExampleBlockEntity::new, EXAMPLE_BLOCK).build(null);
+				helper.register(new ResourceLocation("mcgltf", "example_blockentity"), EXAMPLE_BLOCK_ENTITY_TYPE);
+			});
+			
+			event.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
+				EXAMPLE_ENTITY_TYPE = EntityType.Builder.of(ExampleEntity::new, MobCategory.MISC)
+						.sized(0.6F, 1.95F)
+						.clientTrackingRange(10)
+						.build("mcgltf:example_entity");
+				helper.register(new ResourceLocation("mcgltf", "example_entity"), EXAMPLE_ENTITY_TYPE);
+			});
+			
 			AbstractItemGltfModelReceiver itemModelReceiver = new AbstractItemGltfModelReceiver() {
 
 				@Override
@@ -440,40 +422,36 @@ public class Example {
 				
 			};
 			
-			item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+			event.register(ForgeRegistries.Keys.ITEMS, helper -> {
+				item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
 
-				@Override
-				public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-					consumer.accept(renderProperties);
-				}
-				
-			};
-			item.setRegistryName(new ResourceLocation("mcgltf", "example_item"));
-			event.getRegistry().register(item);
-			
-			blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+					@Override
+					public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+						consumer.accept(renderProperties);
+					}
+					
+				};;
+				helper.register(new ResourceLocation("mcgltf", "example_item"), item);
+				blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
 
-				@Override
-				public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-					consumer.accept(renderProperties);
-				}
-				
-			};
-			blockItem.setRegistryName(EXAMPLE_BLOCK.getRegistryName());
-			event.getRegistry().register(blockItem);
-			
-			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-			spawnEggItem.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
-			event.getRegistry().register(spawnEggItem);
+					@Override
+					public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+						consumer.accept(renderProperties);
+					}
+					
+				};
+				helper.register(new ResourceLocation("mcgltf", "example_block"), blockItem);
+				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+			});
 		}
 		
 		@SubscribeEvent
-		public static void onEvent(final EntityAttributeCreationEvent event) {
+		public static void onEvent(EntityAttributeCreationEvent event) {
 			event.put(EXAMPLE_ENTITY_TYPE, ExampleEntity.createAttributes().build());
 		}
 		
 		@SubscribeEvent
-		public static void onEvent(final EntityRenderersEvent.RegisterRenderers event) {
+		public static void onEvent(EntityRenderersEvent.RegisterRenderers event) {
 			event.registerBlockEntityRenderer(EXAMPLE_BLOCK_ENTITY_TYPE, (context) -> {
 				ExampleBlockEntityRenderer ber = new ExampleBlockEntityRenderer();
 				MCglTF.getInstance().addGltfModelReceiver(ber);

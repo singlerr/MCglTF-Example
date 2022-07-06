@@ -1,12 +1,10 @@
 {
 	"homepage": "https://github.com/TimLee9024/MCglTF-Example/releases",
-	"1.18.2": {
-		"1.18.2-Forge-1.0.0.2": "Fix registry name of block item is incorrect on server",
-		"1.18.2-Forge-1.0.0.1": "Fix depth test sometime not enable on GUI Item",
-		"1.18.2-Forge-1.0.0.0": "Initial release"
+	"1.19": {
+		"1.19-Forge-1.0.0.0": "Initial release"
 	},
 	"promos": {
-		"1.18.2-latest": "1.18.2-Forge-1.0.0.2",
-		"1.18.2-recommended": "1.18.2-Forge-1.0.0.2"
+		"1.19-latest": "1.19-Forge-1.0.0.0",
+		"1.19-recommended": "1.19-Forge-1.0.0.0"
 	}
 }
