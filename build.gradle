@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 
 
-version = '1.18.2-Forge-1.0.0.1'
+version = '1.18.2-Forge-1.0.0.2'
 group = 'com.timlee9024.mcgltf.example' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'MCglTF-Example'
 

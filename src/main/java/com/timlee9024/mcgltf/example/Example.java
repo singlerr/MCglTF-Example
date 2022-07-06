@@ -87,7 +87,7 @@ public class Example {
 			event.getRegistry().register(item);
 			
 			BlockItem blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-			item.setRegistryName(new ResourceLocation("mcgltf", "example_entity_spawn_egg"));
+			item.setRegistryName(EXAMPLE_BLOCK.getRegistryName());
 			event.getRegistry().register(blockItem);
 			
 			ForgeSpawnEggItem spawnEggItem = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
