@@ -48,7 +48,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 	}
 
 	@Override
-	public void onModelLoaded(RenderedGltfModel renderedModel) {
+	public void onReceiveSharedModel(RenderedGltfModel renderedModel) {
 		vanillaSkinningCommands = renderedModel.vanillaSceneSkinningCommands.get(0);
 		vanillaRenderCommands = renderedModel.vanillaSceneRenderCommands.get(0);
 		shaderModCommands = renderedModel.shaderModSceneCommands.get(0);
