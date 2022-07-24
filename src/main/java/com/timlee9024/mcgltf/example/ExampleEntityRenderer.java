@@ -40,7 +40,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 	}
 
 	@Override
-	public void onModelLoaded(RenderedGltfModel renderedModel) {
+	public void onReceiveSharedModel(RenderedGltfModel renderedModel) {
 		vanillaCommands = renderedModel.vanillaSceneCommands.get(0);
 		shaderModCommands = renderedModel.shaderModSceneCommands.get(0);
 		animations = GltfAnimations.createModelAnimations(renderedModel.gltfModel.getAnimationModels());
