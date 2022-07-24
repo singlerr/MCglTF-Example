@@ -19,7 +19,7 @@ public abstract class AbstractItemGltfModelReceiver implements IGltfModelReceive
 	public List<Animation> animations;
 	
 	@Override
-	public void onModelLoaded(RenderedGltfModel renderedModel) {
+	public void onReceiveSharedModel(RenderedGltfModel renderedModel) {
 		vanillaSkinningCommands = renderedModel.vanillaSceneSkinningCommands.get(0);
 		vanillaRenderCommands = renderedModel.vanillaSceneRenderCommands.get(0);
 		shaderModCommands = renderedModel.shaderModSceneCommands.get(0);
