@@ -28,8 +28,8 @@
             "scale": [ 1, 1, 1 ]
         },
         "fixed": {
-            "rotation": [ 0, 180, 0 ],
-            "translation": [ 0, 0, 0 ],
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 8, 0, 0 ],
             "scale":[ 1, 1, 1 ]
         },
         "ground": {
