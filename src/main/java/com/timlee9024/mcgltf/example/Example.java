@@ -36,9 +36,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.IItemRenderProperties;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -315,7 +314,7 @@ public class Example {
 					if(currentItem == item) {
 						Minecraft mc = Minecraft.getInstance();
 						for(Animation animation : itemModelReceiver.animations) {
-							animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+							animation.update((mc.level.getGameTime() + mc.getPartialTick()) / 20 % animation.getEndTimeS());
 						}
 						itemModelReceiver.vanillaSkinningCommands.run();
 						
@@ -326,7 +325,7 @@ public class Example {
 					else if(currentItem == blockItem) {
 						Minecraft mc = Minecraft.getInstance();
 						for(Animation animation : blockItemModelReceiver.animations) {
-							animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+							animation.update((mc.level.getGameTime() + mc.getPartialTick()) / 20 % animation.getEndTimeS());
 						}
 						blockItemModelReceiver.vanillaSkinningCommands.run();
 						
@@ -393,14 +392,14 @@ public class Example {
 					if(currentItem == item) {
 						Minecraft mc = Minecraft.getInstance();
 						for(Animation animation : itemModelReceiver.animations) {
-							animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+							animation.update((mc.level.getGameTime() + mc.getPartialTick()) / 20 % animation.getEndTimeS());
 						}
 						itemModelReceiver.shaderModCommands.forEach((command) -> command.run());
 					}
 					else if(currentItem == blockItem) {
 						Minecraft mc = Minecraft.getInstance();
 						for(Animation animation : blockItemModelReceiver.animations) {
-							animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
+							animation.update((mc.level.getGameTime() + mc.getPartialTick()) / 20 % animation.getEndTimeS());
 						}
 						blockItemModelReceiver.shaderModCommands.forEach((command) -> command.run());
 					}
@@ -413,10 +412,10 @@ public class Example {
 					GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture0);
 				}
 			};
-			IItemRenderProperties renderProperties = new IItemRenderProperties() {
+			IClientItemExtensions extensions = new IClientItemExtensions() {
 
 				@Override
-				public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+				public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 					return bewlr;
 				}
 				
@@ -426,17 +425,17 @@ public class Example {
 				item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
 
 					@Override
-					public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-						consumer.accept(renderProperties);
+					public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+						consumer.accept(extensions);
 					}
 					
-				};;
+				};
 				helper.register(new ResourceLocation("mcgltf", "example_item"), item);
 				blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
 
 					@Override
-					public void initializeClient(Consumer<IItemRenderProperties> consumer) {
-						consumer.accept(renderProperties);
+					public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+						consumer.accept(extensions);
 					}
 					
 				};
