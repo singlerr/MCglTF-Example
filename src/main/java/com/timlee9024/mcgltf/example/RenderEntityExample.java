@@ -32,7 +32,7 @@ public class RenderEntityExample extends Render<EntityExample> implements IGltfM
 	}
 
 	@Override
-	public void onModelLoaded(RenderedGltfModel renderedModel) {
+	public void onReceiveSharedModel(RenderedGltfModel renderedModel) {
 		commands = renderedModel.sceneCommands.get(0);
 		animations = GltfAnimations.createModelAnimations(renderedModel.gltfModel.getAnimationModels());
 	}
