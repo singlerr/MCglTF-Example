@@ -80,13 +80,13 @@ public class ClientProxy extends CommonProxy {
 					for(Animation animation : itemModelReceiver.animations) {
 						animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(Minecraft.getMinecraft().world, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 					}
-					itemModelReceiver.commands.forEach((command) -> command.run());
+					itemModelReceiver.commands.forEach(Runnable::run);
 				}
 				else if(currentItem == itemBlock) {
 					for(Animation animation : blockItemModelReceiver.animations) {
 						animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(Minecraft.getMinecraft().world, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 					}
-					blockItemModelReceiver.commands.forEach((command) -> command.run());
+					blockItemModelReceiver.commands.forEach(Runnable::run);
 				}
 				
 				GL11.glPopAttrib();

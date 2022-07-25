@@ -23,12 +23,12 @@ public abstract class CommonProxy {
 	public CommonProxy() {
 		item = new Item();
 		item.setRegistryName(new ResourceLocation("mcgltf", "example_item"));
-		item.setUnlocalizedName("mcgltf.example_item");
+		item.setTranslationKey("mcgltf.example_item");
 		item.setCreativeTab(CreativeTabs.MISC);
 		
 		block = new BlockExample(Material.GROUND, MapColor.AIR);
 		block.setRegistryName(new ResourceLocation("mcgltf", "example_block"));
-		block.setUnlocalizedName("mcgltf.example_block");
+		block.setTranslationKey("mcgltf.example_block");
 		block.setCreativeTab(CreativeTabs.MISC);
 		itemBlock = new ItemBlock(block);
 		itemBlock.setRegistryName(block.getRegistryName());

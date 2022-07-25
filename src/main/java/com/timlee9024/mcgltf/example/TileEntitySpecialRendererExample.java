@@ -65,7 +65,7 @@ public class TileEntitySpecialRendererExample extends TileEntitySpecialRenderer<
 			for(Animation animation : animations) {
 				animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(world, partialTicks) % animation.getEndTimeS());
 			}
-			commands.forEach((command) -> command.run());
+			commands.forEach(Runnable::run);
 			GL11.glPopAttrib();
 			GL11.glPopMatrix();
 		}
