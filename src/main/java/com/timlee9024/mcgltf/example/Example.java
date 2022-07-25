@@ -242,14 +242,14 @@ public class Example {
 						for(Animation animation : itemModelReceiver.animations) {
 							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 						}
-						itemModelReceiver.vanillaCommands.forEach((command) -> command.run());
+						itemModelReceiver.vanillaCommands.forEach(Runnable::run);
 					}
 					else if(currentItem == blockItem) {
 						Minecraft mc = Minecraft.getInstance();
 						for(Animation animation : blockItemModelReceiver.animations) {
 							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 						}
-						blockItemModelReceiver.vanillaCommands.forEach((command) -> command.run());
+						blockItemModelReceiver.vanillaCommands.forEach(Runnable::run);
 					}
 				}
 				
@@ -260,14 +260,14 @@ public class Example {
 						for(Animation animation : itemModelReceiver.animations) {
 							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 						}
-						itemModelReceiver.shaderModCommands.forEach((command) -> command.run());
+						itemModelReceiver.shaderModCommands.forEach(Runnable::run);
 					}
 					else if(currentItem == blockItem) {
 						Minecraft mc = Minecraft.getInstance();
 						for(Animation animation : blockItemModelReceiver.animations) {
 							animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(mc.level, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
 						}
-						blockItemModelReceiver.shaderModCommands.forEach((command) -> command.run());
+						blockItemModelReceiver.shaderModCommands.forEach(Runnable::run);
 					}
 				}
 				

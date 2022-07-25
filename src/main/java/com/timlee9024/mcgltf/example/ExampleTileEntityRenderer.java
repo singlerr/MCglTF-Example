@@ -100,10 +100,10 @@ public class ExampleTileEntityRenderer extends TileEntityRenderer<ExampleTileEnt
 				GL13.glActiveTexture(GL13.GL_TEXTURE2);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				vanillaCommands.forEach((command) -> command.run());
+				vanillaCommands.forEach(Runnable::run);
 			}
 			else {
-				shaderModCommands.forEach((command) -> command.run());
+				shaderModCommands.forEach(Runnable::run);
 			}
 			
 			GL11.glPopAttrib();
