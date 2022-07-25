@@ -117,7 +117,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				int currentTexture0 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
 				
-				shaderModCommands.forEach((command) -> command.run());
+				shaderModCommands.forEach(Runnable::run);
 				
 				GL13.glActiveTexture(GL13.GL_TEXTURE3);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture3);
@@ -186,7 +186,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		MCglTF.LIGHT0_DIRECTION = new Vector3f(MCglTF.CURRENT_SHADER_INSTANCE.LIGHT0_DIRECTION.getFloatBuffer().get(0), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT0_DIRECTION.getFloatBuffer().get(1), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT0_DIRECTION.getFloatBuffer().get(2));
 		MCglTF.LIGHT1_DIRECTION = new Vector3f(MCglTF.CURRENT_SHADER_INSTANCE.LIGHT1_DIRECTION.getFloatBuffer().get(0), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT1_DIRECTION.getFloatBuffer().get(1), MCglTF.CURRENT_SHADER_INSTANCE.LIGHT1_DIRECTION.getFloatBuffer().get(2));
 		
-		vanillaRenderCommands.forEach((command) -> command.run());
+		vanillaRenderCommands.forEach(Runnable::run);
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE2);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, currentTexture2);

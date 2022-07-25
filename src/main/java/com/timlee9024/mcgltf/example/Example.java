@@ -339,7 +339,7 @@ public class Example {
 						
 						setupVanillaShader();
 						
-						itemModelReceiver.vanillaRenderCommands.forEach((command) -> command.run());
+						itemModelReceiver.vanillaRenderCommands.forEach(Runnable::run);
 					}
 					else if(currentItem == blockItem) {
 						Minecraft mc = Minecraft.getInstance();
@@ -350,7 +350,7 @@ public class Example {
 						
 						setupVanillaShader();
 						
-						blockItemModelReceiver.vanillaRenderCommands.forEach((command) -> command.run());
+						blockItemModelReceiver.vanillaRenderCommands.forEach(Runnable::run);
 					}
 				}
 				
@@ -413,14 +413,14 @@ public class Example {
 						for(Animation animation : itemModelReceiver.animations) {
 							animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
 						}
-						itemModelReceiver.shaderModCommands.forEach((command) -> command.run());
+						itemModelReceiver.shaderModCommands.forEach(Runnable::run);
 					}
 					else if(currentItem == blockItem) {
 						Minecraft mc = Minecraft.getInstance();
 						for(Animation animation : blockItemModelReceiver.animations) {
 							animation.update((mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20 % animation.getEndTimeS());
 						}
-						blockItemModelReceiver.shaderModCommands.forEach((command) -> command.run());
+						blockItemModelReceiver.shaderModCommands.forEach(Runnable::run);
 					}
 					
 					GL13.glActiveTexture(GL13.GL_TEXTURE3);
