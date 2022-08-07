@@ -12,7 +12,7 @@ In order to adapt into BSL Shaders' SEUS/Old PBR format, some change were made:
 - All normal textures had been converted from OpenGL format (Y+) to DirectX format (Y-) by flipping green channel.
 - `Occlusion(R)Roughness(G)Metallic(B)` textures and `Emissive color(RGB)` textures had been edited and combined into `Glossiness(R)Metallic(G)Emissive strength(B)` textures for specular map.
 ## Additonal Note About Setup This Project
-1. Build MCglTF with "gradlew jar" to create a [deobuscated version](https://forums.minecraftforge.net/topic/81617-1152-eclipse-and-gradle-how-to-use-jar-from-another-project-and-import-solved) of MCglTF.
+1. Build MCglTF with "gradlew build" to create a `-dev` version of MCglTF which is inside `build/devlibs`.
 2. Create a folder named `libs` in the same dir level as `src`.
-3. Put deobuscated version of MCglTF into the `libs` folder.
+3. Put `-dev` version of MCglTF into the `libs` folder.
 4. In Eclipse IDE, add MCglTF jar as `Referenced Libraries` via `Project > Properties > Java Build Path > Libraries > Add JARs`.
