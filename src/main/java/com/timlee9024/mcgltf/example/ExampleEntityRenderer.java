@@ -9,8 +9,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.timlee9024.mcgltf.IGltfModelReceiver;
 import com.timlee9024.mcgltf.MCglTF;
 import com.timlee9024.mcgltf.RenderedGltfModel;
@@ -19,12 +19,11 @@ import com.timlee9024.mcgltf.animation.GltfAnimationCreator;
 import com.timlee9024.mcgltf.animation.InterpolatedChannel;
 
 import de.javagl.jgltf.model.AnimationModel;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.client.model.animation.Animation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> implements IGltfModelReceiver {
 
@@ -32,7 +31,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 	
 	protected List<List<InterpolatedChannel>> animations;
 	
-	protected ExampleEntityRenderer(EntityRendererManager p_i46179_1_) {
+	protected ExampleEntityRenderer(EntityRenderDispatcher p_i46179_1_) {
 		super(p_i46179_1_);
 	}
 
@@ -57,8 +56,8 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 	}
 
 	@Override
-	public void render(ExampleEntity p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
-		float time = Animation.getWorldTime(p_225623_1_.level, p_225623_3_);
+	public void render(ExampleEntity p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack p_225623_4_, MultiBufferSource p_225623_5_, int p_225623_6_) {
+		float time = (p_225623_1_.level.getGameTime() + p_225623_3_) / 20;
 		//Play every animation clips simultaneously
 		for(List<InterpolatedChannel> animation : animations) {
 			animation.parallelStream().forEach((channel) -> {
@@ -79,7 +78,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		RenderSystem.multMatrix(p_225623_4_.last().pose());
-		GL11.glRotatef(MathHelper.rotLerp(p_225623_3_, p_225623_1_.yBodyRotO, p_225623_1_.yBodyRot), 0.0F, 1.0F, 0.0F);
+		GL11.glRotatef(Mth.rotLerp(p_225623_3_, p_225623_1_.yBodyRotO, p_225623_1_.yBodyRot), 0.0F, 1.0F, 0.0F);
 		
 		GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_225623_6_ & '\uffff'), (short)(p_225623_6_ >> 16 & '\uffff'));
 		

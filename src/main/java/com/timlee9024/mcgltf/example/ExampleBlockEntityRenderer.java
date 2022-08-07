@@ -9,8 +9,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.timlee9024.mcgltf.IGltfModelReceiver;
 import com.timlee9024.mcgltf.MCglTF;
 import com.timlee9024.mcgltf.RenderedGltfModel;
@@ -19,22 +19,21 @@ import com.timlee9024.mcgltf.animation.GltfAnimationCreator;
 import com.timlee9024.mcgltf.animation.InterpolatedChannel;
 
 import de.javagl.jgltf.model.AnimationModel;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.client.model.animation.Animation;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 
-public class ExampleTileEntityRenderer extends TileEntityRenderer<ExampleTileEntity> implements IGltfModelReceiver {
+public class ExampleBlockEntityRenderer extends BlockEntityRenderer<ExampleBlockEntity> implements IGltfModelReceiver {
 
 	protected RenderedGltfScene renderedScene;
 	
 	protected List<List<InterpolatedChannel>> animations;
 	
-	public ExampleTileEntityRenderer(TileEntityRendererDispatcher p_i226006_1_) {
+	public ExampleBlockEntityRenderer(BlockEntityRenderDispatcher p_i226006_1_) {
 		super(p_i226006_1_);
 	}
 
@@ -54,11 +53,11 @@ public class ExampleTileEntityRenderer extends TileEntityRenderer<ExampleTileEnt
 	}
 
 	/**
-	 * Since you use custom ISTER for BlockItem instead of TER to render item form of block,
-	 * the last parameters p_225616_6_ which control overlay color is almost unused.
+	 * Since you use custom BEWLR(DynamicItemRenderer) for BlockItem instead of BER to render item form of block,
+	 * the last parameters p_225616_6_ which control overlay color is almost never used.
 	 */
 	@Override
-	public void render(ExampleTileEntity p_225616_1_, float p_225616_2_, MatrixStack p_225616_3_, IRenderTypeBuffer p_225616_4_, int p_225616_5_, int p_225616_6_) {
+	public void render(ExampleBlockEntity p_225616_1_, float p_225616_2_, PoseStack p_225616_3_, MultiBufferSource p_225616_4_, int p_225616_5_, int p_225616_6_) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		
@@ -71,9 +70,9 @@ public class ExampleTileEntityRenderer extends TileEntityRenderer<ExampleTileEnt
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		RenderSystem.multMatrix(p_225616_3_.last().pose());
-		World world = p_225616_1_.getLevel();
-		if(world != null) {
-			float time = Animation.getWorldTime(world, p_225616_2_);
+		Level level = p_225616_1_.getLevel();
+		if(level != null) {
+			float time = (level.getGameTime() + p_225616_2_) / 20;
 			//Play every animation clips simultaneously
 			for(List<InterpolatedChannel> animation : animations) {
 				animation.parallelStream().forEach((channel) -> {
@@ -83,7 +82,7 @@ public class ExampleTileEntityRenderer extends TileEntityRenderer<ExampleTileEnt
 			}
 			
 			GL11.glTranslatef(0.5F, 0.0F, 0.5F); //Make sure it is in the center of the block
-			switch(world.getBlockState(p_225616_1_.getBlockPos()).getOptionalValue(HorizontalBlock.FACING).orElse(Direction.NORTH)) {
+			switch(level.getBlockState(p_225616_1_.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
 			case DOWN:
 				break;
 			case UP:

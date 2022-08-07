@@ -1,19 +1,20 @@
 package com.timlee9024.mcgltf.example;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class ExampleBlock extends HorizontalBlock {
+public class ExampleBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
 	protected ExampleBlock(Properties p_i48377_1_) {
 		super(p_i48377_1_);
@@ -21,27 +22,22 @@ public class ExampleBlock extends HorizontalBlock {
 	}
 
 	@Override
-	public boolean hasTileEntity(BlockState state) {
+	public BlockEntity newBlockEntity(BlockGetter var1) {
+		return new ExampleBlockEntity();
+	}
+
+	@Override
+	public boolean propagatesSkylightDown(BlockState p_200123_1_, BlockGetter p_200123_2_, BlockPos p_200123_3_) {
 		return true;
 	}
 
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return new ExampleTileEntity();
-	}
-
-	@Override
-	public boolean propagatesSkylightDown(BlockState p_200123_1_, IBlockReader p_200123_2_, BlockPos p_200123_3_) {
-		return true;
-	}
-
-	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext p_196258_1_) {
+	public BlockState getStateForPlacement(BlockPlaceContext p_196258_1_) {
 		return defaultBlockState().setValue(FACING, p_196258_1_.getHorizontalDirection().getOpposite());
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_206840_1_) {
 		p_206840_1_.add(FACING);
 	}
 
@@ -51,13 +47,13 @@ public class ExampleBlock extends HorizontalBlock {
 	}
 
 	@Override
-	public float getShadeBrightness(BlockState p_220080_1_, IBlockReader p_220080_2_, BlockPos p_220080_3_) {
+	public float getShadeBrightness(BlockState p_220080_1_, BlockGetter p_220080_2_, BlockPos p_220080_3_) {
 		return 1.0F;
 	}
 
 	@Override
-	public VoxelShape getVisualShape(BlockState p_230322_1_, IBlockReader p_230322_2_, BlockPos p_230322_3_, ISelectionContext p_230322_4_) {
-		return VoxelShapes.empty();
+	public VoxelShape getVisualShape(BlockState p_230322_1_, BlockGetter p_230322_2_, BlockPos p_230322_3_, CollisionContext p_230322_4_) {
+		return Shapes.empty();
 	}
 
 }

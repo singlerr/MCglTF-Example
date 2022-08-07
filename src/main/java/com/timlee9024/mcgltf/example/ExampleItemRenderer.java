@@ -9,8 +9,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.timlee9024.mcgltf.IGltfModelReceiver;
 import com.timlee9024.mcgltf.MCglTF;
 import com.timlee9024.mcgltf.RenderedGltfModel;
@@ -19,12 +19,13 @@ import com.timlee9024.mcgltf.animation.GltfAnimationCreator;
 import com.timlee9024.mcgltf.animation.InterpolatedChannel;
 
 import de.javagl.jgltf.model.AnimationModel;
+import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraftforge.client.model.animation.Animation;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.world.item.ItemStack;
 
-public abstract class ExampleItemRenderer implements IGltfModelReceiver {
+public abstract class ExampleItemRenderer implements IGltfModelReceiver, BuiltinItemRendererRegistry.DynamicItemRenderer {
 
 	protected RenderedGltfScene renderedScene;
 	
@@ -39,10 +40,11 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			animations.add(GltfAnimationCreator.createGltfAnimation(animationModel));
 		}
 	}
-	
-	public void render(ItemCameraTransforms.TransformType p_239207_2_, MatrixStack p_239207_3_, IRenderTypeBuffer p_239207_4_, int p_239207_5_, int p_239207_6_) {
+
+	@Override
+	public void render(ItemStack stack, ItemTransforms.TransformType mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
 		Minecraft mc = Minecraft.getInstance();
-		float time = Animation.getWorldTime(mc.level, Animation.getPartialTickTime());
+		float time = (mc.level.getGameTime() + ExampleClient.INSTANCE.tickDelta) / 20;
 		//Play every animation clips simultaneously
 		for(List<InterpolatedChannel> animation : animations) {
 			animation.parallelStream().forEach((channel) -> {
@@ -58,9 +60,9 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_COLOR_MATERIAL);
 		
-		RenderSystem.multMatrix(p_239207_3_.last().pose());
+		RenderSystem.multMatrix(matrices.last().pose());
 		
-		switch(p_239207_2_) {
+		switch(mode) {
 		case THIRD_PERSON_LEFT_HAND:
 		case THIRD_PERSON_RIGHT_HAND:
 		case HEAD:
@@ -69,8 +71,8 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			
-			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE1, (short)(p_239207_6_ & '\uffff'), (short)(p_239207_6_ >> 16 & '\uffff'));
-			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_239207_5_ & '\uffff'), (short)(p_239207_5_ >> 16 & '\uffff'));
+			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE1, (short)(overlay & '\uffff'), (short)(overlay >> 16 & '\uffff'));
+			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(light & '\uffff'), (short)(light >> 16 & '\uffff'));
 			
 			if(MCglTF.getInstance().isShaderModActive()) {
 				renderedScene.renderForShaderMod();
@@ -93,7 +95,7 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			
-			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_239207_5_ & '\uffff'), (short)(p_239207_5_ >> 16 & '\uffff'));
+			GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(light & '\uffff'), (short)(light >> 16 & '\uffff'));
 			
 			if(MCglTF.getInstance().isShaderModActive()) {
 				renderedScene.renderForShaderMod();
