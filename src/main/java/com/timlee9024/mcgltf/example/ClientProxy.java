@@ -1,12 +1,8 @@
 package com.timlee9024.mcgltf.example;
 
-import org.lwjgl.opengl.GL11;
-
 import com.timlee9024.mcgltf.ItemCameraTransformsHelper;
 import com.timlee9024.mcgltf.MCglTF;
 
-import de.javagl.jgltf.model.animation.Animation;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -39,57 +35,36 @@ public class ClientProxy extends CommonProxy {
 	
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
-		AbstractItemGltfModelReceiver itemModelReceiver = new AbstractItemGltfModelReceiver() {
+		ItemRendererExample itemRenderer = new ItemRendererExample() {
 
 			@Override
 			public ResourceLocation getModelLocation() {
 				return new ResourceLocation("mcgltf", "models/item/water_bottle.gltf");
 			}
 		};
-		MCglTF.getInstance().addGltfModelReceiver(itemModelReceiver);
+		MCglTF.getInstance().addGltfModelReceiver(itemRenderer);
 		
-		AbstractItemGltfModelReceiver blockItemModelReceiver = new AbstractItemGltfModelReceiver() {
+		ItemRendererExample blockItemRenderer = new ItemRendererExample() {
 
 			@Override
 			public ResourceLocation getModelLocation() {
 				return new ResourceLocation("mcgltf", "models/block/boom_box.gltf");
 			}
 		};
-		MCglTF.getInstance().addGltfModelReceiver(blockItemModelReceiver);
+		MCglTF.getInstance().addGltfModelReceiver(blockItemRenderer);
 		
 		//According to Forge Doc "Each mod should only have one instance of a custom TEISR/ISTER/BEWLR.", due to creating an instance will also initiate unused fields inside the class which waste a lots of memory.
 		TileEntityItemStackRenderer teisr = new TileEntityItemStackRenderer() {
 
 			@Override
 			public void renderByItem(ItemStack itemStackIn) {
-				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-				GL11.glShadeModel(GL11.GL_SMOOTH);
-				
 				Item currentItem = itemStackIn.getItem();
 				if(currentItem == item) {
-					//Require ItemCameraTransformsHelper$registerDummyModelToAccessCurrentTransformTypeForTEISR(yourItem) during ModelRegistryEvent to make ItemCameraTransformsHelper$getCurrentTransformType() work
-					switch(ItemCameraTransformsHelper.getCurrentTransformType()) {
-					case GUI:
-						GL11.glEnable(GL11.GL_LIGHTING);
-						break;
-					default:
-						break;
-					}
-					
-					//Play every animation clips simultaneously
-					for(Animation animation : itemModelReceiver.animations) {
-						animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(Minecraft.getMinecraft().world, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
-					}
-					itemModelReceiver.commands.forEach(Runnable::run);
+					itemRenderer.renderWithItemCameraTransformsHelper();
 				}
 				else if(currentItem == itemBlock) {
-					for(Animation animation : blockItemModelReceiver.animations) {
-						animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(Minecraft.getMinecraft().world, net.minecraftforge.client.model.animation.Animation.getPartialTickTime()) % animation.getEndTimeS());
-					}
-					blockItemModelReceiver.commands.forEach(Runnable::run);
+					blockItemRenderer.render();
 				}
-				
-				GL11.glPopAttrib();
 			}
 			
 		};

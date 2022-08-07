@@ -1,26 +1,33 @@
 package com.timlee9024.mcgltf.example;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL30;
 
 import com.timlee9024.mcgltf.IGltfModelReceiver;
+import com.timlee9024.mcgltf.MCglTF;
 import com.timlee9024.mcgltf.RenderedGltfModel;
+import com.timlee9024.mcgltf.RenderedGltfScene;
+import com.timlee9024.mcgltf.animation.GltfAnimationCreator;
+import com.timlee9024.mcgltf.animation.InterpolatedChannel;
 
-import de.javagl.jgltf.model.GltfAnimations;
-import de.javagl.jgltf.model.animation.Animation;
+import de.javagl.jgltf.model.AnimationModel;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.animation.Animation;
 
 public class RenderEntityExample extends Render<EntityExample> implements IGltfModelReceiver {
 
-	protected List<Runnable> commands;
+	protected RenderedGltfScene renderedScene;
 	
-	protected List<Animation> animations;
+	protected List<List<InterpolatedChannel>> animations;
 	
 	public RenderEntityExample(RenderManager renderManager) {
 		super(renderManager);
@@ -33,8 +40,12 @@ public class RenderEntityExample extends Render<EntityExample> implements IGltfM
 
 	@Override
 	public void onReceiveSharedModel(RenderedGltfModel renderedModel) {
-		commands = renderedModel.sceneCommands.get(0);
-		animations = GltfAnimations.createModelAnimations(renderedModel.gltfModel.getAnimationModels());
+		renderedScene = renderedModel.renderedGltfScenes.get(0);
+		List<AnimationModel> animationModels = renderedModel.gltfModel.getAnimationModels();
+		animations = new ArrayList<List<InterpolatedChannel>>(animationModels.size());
+		for(AnimationModel animationModel : animationModels) {
+			animations.add(GltfAnimationCreator.createGltfAnimation(animationModel));
+		}
 	}
 
 	@Override
@@ -61,21 +72,37 @@ public class RenderEntityExample extends Render<EntityExample> implements IGltfM
 
 	@Override
 	public void doRender(EntityExample entity, double x, double y, double z, float entityYaw, float partialTicks) {
-		if(commands != null) {
-			GL11.glPushMatrix();
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			GL11.glShadeModel(GL11.GL_SMOOTH);
-			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glTranslated(x, y, z);
-			GL11.glRotatef(interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks), 0.0F, 1.0F, 0.0F);
-			for(Animation animation : animations) {
-				animation.update(net.minecraftforge.client.model.animation.Animation.getWorldTime(entity.world, partialTicks) % animation.getEndTimeS());
-			}
-			commands.forEach(Runnable::run);
-			GL11.glPopAttrib();
-			GL11.glPopMatrix();
+		GL11.glPushMatrix();
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glTranslated(x, y, z);
+		GL11.glRotatef(interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks), 0.0F, 1.0F, 0.0F);
+		
+		float time = Animation.getWorldTime(entity.world, partialTicks);
+		//Play every animation clips simultaneously
+		for(List<InterpolatedChannel> animation : animations) {
+			animation.parallelStream().forEach((channel) -> {
+				float[] keys = channel.getKeys();
+				channel.update(time % keys[keys.length - 1]);
+			});
 		}
+		
+		if(MCglTF.getInstance().isShaderModActive()) {
+			renderedScene.renderForShaderMod();
+		}
+		else {
+			renderedScene.renderForVanilla();
+		}
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+		GL30.glBindVertexArray(0);
+		RenderedGltfModel.nodeGlobalTransformLookup.clear();
+		
+		GL11.glPopAttrib();
+		GL11.glPopMatrix();
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 

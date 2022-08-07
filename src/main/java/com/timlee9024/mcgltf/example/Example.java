@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = "example_mcgltf_usage", useMetadata = true)
+@Mod(modid = "example_mcgltf_usage", dependencies = "required-after-client:mcgltf;", useMetadata = true)
 public class Example {
 
 	@SidedProxy(clientSide = "com.timlee9024.mcgltf.example.ClientProxy", serverSide = "com.timlee9024.mcgltf.example.ServerProxy")
