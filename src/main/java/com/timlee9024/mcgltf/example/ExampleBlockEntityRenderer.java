@@ -48,8 +48,8 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 	}
 
 	/**
-	 * Since you use custom BEWLR for BlockItem instead of BER to render item form of block,
-	 * the last parameters p_112312_ which control overlay color is almost unused.
+	 * Since you use custom BEWLR(DynamicItemRenderer) for BlockItem instead of BER to render item form of block,
+	 * the last parameters p_112312_ which control overlay color is almost never used.
 	 */
 	@Override
 	public void render(ExampleBlockEntity p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
