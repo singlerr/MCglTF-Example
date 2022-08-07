@@ -21,12 +21,13 @@ import com.timlee9024.mcgltf.animation.GltfAnimationCreator;
 import com.timlee9024.mcgltf.animation.InterpolatedChannel;
 
 import de.javagl.jgltf.model.AnimationModel;
+import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraft.world.item.ItemStack;
 
-public abstract class ExampleItemRenderer implements IGltfModelReceiver {
+public abstract class ExampleItemRenderer implements IGltfModelReceiver, BuiltinItemRendererRegistry.DynamicItemRenderer {
 
 	protected RenderedGltfScene renderedScene;
 	
@@ -41,10 +42,11 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			animations.add(GltfAnimationCreator.createGltfAnimation(animationModel));
 		}
 	}
-	
-	public void renderByItem(ItemTransforms.TransformType p_108831_, PoseStack p_108832_, MultiBufferSource p_108833_, int p_108834_, int p_108835_) {
+
+	@Override
+	public void render(ItemStack stack, ItemTransforms.TransformType mode, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
 		Minecraft mc = Minecraft.getInstance();
-		float time = (mc.level.getGameTime() + MinecraftForgeClient.getPartialTick()) / 20;
+		float time = (mc.level.getGameTime() + ExampleClient.INSTANCE.tickDelta) / 20;
 		//Play every animation clips simultaneously
 		for(List<InterpolatedChannel> animation : animations) {
 			animation.parallelStream().forEach((channel) -> {
@@ -62,7 +64,7 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 		boolean currentDepthTest = GL11.glGetBoolean(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		
-		switch(p_108831_) {
+		switch(mode) {
 		case THIRD_PERSON_LEFT_HAND:
 		case THIRD_PERSON_RIGHT_HAND:
 		case HEAD:
@@ -70,11 +72,11 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			GL11.glEnable(GL11.GL_BLEND);
 			GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			
-			RenderedGltfModel.CURRENT_POSE = p_108832_.last().pose();
-			RenderedGltfModel.CURRENT_NORMAL = p_108832_.last().normal();
+			RenderedGltfModel.CURRENT_POSE = matrices.last().pose();
+			RenderedGltfModel.CURRENT_NORMAL = matrices.last().normal();
 			
-			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV1, p_108835_ & '\uffff', p_108835_ >> 16 & '\uffff');
-			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_108834_ & '\uffff', p_108834_ >> 16 & '\uffff');
+			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV1, overlay & '\uffff', overlay >> 16 & '\uffff');
+			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, light & '\uffff', light >> 16 & '\uffff');
 			
 			if(MCglTF.getInstance().isShaderModActive()) {
 				renderedScene.renderForShaderMod();
@@ -116,10 +118,10 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			GL11.glEnable(GL11.GL_BLEND);
 			GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			
-			RenderedGltfModel.CURRENT_POSE = p_108832_.last().pose();
-			RenderedGltfModel.CURRENT_NORMAL = p_108832_.last().normal();
+			RenderedGltfModel.CURRENT_POSE = matrices.last().pose();
+			RenderedGltfModel.CURRENT_NORMAL = matrices.last().normal();
 			
-			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_108834_ & '\uffff', p_108834_ >> 16 & '\uffff');
+			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, light & '\uffff', light >> 16 & '\uffff');
 			
 			if(MCglTF.getInstance().isShaderModActive()) {
 				renderedScene.renderForShaderMod();

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "example_mcgltf_usage",
+  "version": "${version}",
+
+  "name": "Example MCglTF Usage",
+  "description": "Example mod to demonstrate the usage of MCglTF.",
+  "authors": [
+    "TimLee9024"
+  ],
+  "contact": {
+    "homepage": "https://github.com/TimLee9024/MCglTF-Example/tree/1.18.2-Fabric",
+    "sources": "https://github.com/TimLee9024/MCglTF-Example/tree/1.18.2-Fabric",
+    "issues": "https://github.com/TimLee9024/MCglTF-Example/issues"
+  },
+
+  "license": "MIT",
+  "icon": "assets/mcgltf/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.timlee9024.mcgltf.example.Example"
+    ],
+    "client": [
+      "com.timlee9024.mcgltf.example.ExampleClient"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.14.6",
+    "fabric": "*",
+    "minecraft": "~1.18.2",
+    "java": ">=17"
+  },
+  "suggests": {
+    "optifabric": "*"
+  },
+  "conflicts": {
+  	"iris": "*"
+  }
+}
