@@ -27,7 +27,7 @@ updateJSONURL="https://raw.githubusercontent.com/TimLee9024/MCglTF-Example/1.18.
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="https://github.com/TimLee9024/MCglTF-Example/tree/1.18.2-Forge/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
+logoFile="icon.png" #optional
 # A text field displayed in the mod UI
 credits="Microsoft and Cesium, for providing glTF sample models" #optional
 # A text field displayed in the mod UI
@@ -36,3 +36,29 @@ authors="TimLee9024" #optional
 description='''
 Example mod to demonstrate the usage of MCglTF.
 '''
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.example_mcgltf_usage]] #optional
+    # the modid of the dependency
+    modId="forge" #mandatory
+    # Does this dependency have to exist - if not, ordering below must be specified
+    mandatory=true #mandatory
+    # The version range of the dependency
+    versionRange="[40,)" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    ordering="NONE"
+    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"
+# Here's another dependency
+[[dependencies.example_mcgltf_usage]]
+    modId="minecraft"
+    mandatory=true
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="[1.18.2,1.19)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.example_mcgltf_usage]]
+    modId="mcgltf"
+    mandatory=false
+    versionRange="[1.18.2-Forge-1.0.0.0,)"
+    ordering="AFTER"
+    side="CLIENT"
