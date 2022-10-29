@@ -1,6 +1,6 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
-import com.timlee9024.mcgltf.MCglTF;
+import com.modularmods.mcgltf.MCglTF;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;

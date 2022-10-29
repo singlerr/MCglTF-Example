@@ -1,4 +1,4 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,30 +11,33 @@ import org.lwjgl.opengl.GL30;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
-import com.timlee9024.mcgltf.IGltfModelReceiver;
-import com.timlee9024.mcgltf.MCglTF;
-import com.timlee9024.mcgltf.RenderedGltfModel;
-import com.timlee9024.mcgltf.RenderedGltfScene;
-import com.timlee9024.mcgltf.animation.GltfAnimationCreator;
-import com.timlee9024.mcgltf.animation.InterpolatedChannel;
+import com.modularmods.mcgltf.IGltfModelReceiver;
+import com.modularmods.mcgltf.MCglTF;
+import com.modularmods.mcgltf.RenderedGltfModel;
+import com.modularmods.mcgltf.RenderedGltfScene;
+import com.modularmods.mcgltf.animation.GltfAnimationCreator;
+import com.modularmods.mcgltf.animation.InterpolatedChannel;
 
 import de.javagl.jgltf.model.AnimationModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.core.Direction;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.util.Mth;
 
-public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEntityRenderer<ExampleBlockEntity> {
+public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> implements IGltfModelReceiver {
 
 	protected RenderedGltfScene renderedScene;
 	
 	protected List<List<InterpolatedChannel>> animations;
 	
+	protected ExampleEntityRenderer(EntityRendererProvider.Context p_174008_) {
+		super(p_174008_);
+	}
+
 	@Override
 	public ResourceLocation getModelLocation() {
-		return new ResourceLocation("mcgltf", "models/block/boom_box.gltf");
+		return new ResourceLocation("mcgltf", "models/entity/cesium_man.gltf");
 	}
 
 	@Override
@@ -47,12 +50,22 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 		}
 	}
 
-	/**
-	 * Since you use custom BEWLR(DynamicItemRenderer) for BlockItem instead of BER to render item form of block,
-	 * the last parameters p_112312_ which control overlay color is almost never used.
-	 */
 	@Override
-	public void render(ExampleBlockEntity p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
+	public ResourceLocation getTextureLocation(ExampleEntity p_114482_) {
+		return null;
+	}
+
+	@Override
+	public void render(ExampleEntity p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
+		float time = (p_114485_.level.getGameTime() + p_114487_) / 20;
+		//Play every animation clips simultaneously
+		for(List<InterpolatedChannel> animation : animations) {
+			animation.parallelStream().forEach((channel) -> {
+				float[] keys = channel.getKeys();
+				channel.update(time % keys[keys.length - 1]);
+			});
+		}
+		
 		int currentVAO = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
 		int currentArrayBuffer = GL11.glGetInteger(GL15.GL_ARRAY_BUFFER_BINDING);
 		int currentElementArrayBuffer = GL11.glGetInteger(GL15.GL_ELEMENT_ARRAY_BUFFER_BINDING);
@@ -65,43 +78,13 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 		GL11.glEnable(GL11.GL_BLEND);
 		GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		p_112309_.pushPose();
-		Level level = p_112307_.getLevel();
-		if(level != null) {
-			float time = (level.getGameTime() + p_112308_) / 20;
-			//Play every animation clips simultaneously
-			for(List<InterpolatedChannel> animation : animations) {
-				animation.parallelStream().forEach((channel) -> {
-					float[] keys = channel.getKeys();
-					channel.update(time % keys[keys.length - 1]);
-				});
-			}
-			
-			p_112309_.translate(0.5, 0.5, 0.5); //Make sure it is in the center of the block
-			switch(level.getBlockState(p_112307_.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
-			case DOWN:
-				break;
-			case UP:
-				break;
-			case NORTH:
-				break;
-			case SOUTH:
-				p_112309_.mulPose(new Quaternion(0.0F, 1.0F, 0.0F, 0.0F));
-				break;
-			case WEST:
-				p_112309_.mulPose(new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F));
-				break;
-			case EAST:
-				p_112309_.mulPose(new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F));
-				break;
-			}
-		}
+		p_114488_.pushPose();
+		p_114488_.mulPose(new Quaternion(0.0F, Mth.rotLerp(p_114487_, p_114485_.yBodyRotO, p_114485_.yBodyRot), 0.0F, true));
+		RenderedGltfModel.CURRENT_POSE = p_114488_.last().pose();
+		RenderedGltfModel.CURRENT_NORMAL = p_114488_.last().normal();
+		p_114488_.popPose();
 		
-		RenderedGltfModel.CURRENT_POSE = p_112309_.last().pose();
-		RenderedGltfModel.CURRENT_NORMAL = p_112309_.last().normal();
-		p_112309_.popPose();
-		
-		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_112311_ & '\uffff', p_112311_ >> 16 & '\uffff');
+		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_114490_ & '\uffff', p_114490_ >> 16 & '\uffff');
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			renderedScene.renderForShaderMod();
@@ -139,7 +122,7 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 		GL30.glBindVertexArray(currentVAO);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, currentArrayBuffer);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, currentElementArrayBuffer);
-		RenderedGltfModel.nodeGlobalTransformLookup.clear();
+		super.render(p_114485_, p_114486_, p_114487_, p_114488_, p_114489_, p_114490_);
 	}
 
 }
