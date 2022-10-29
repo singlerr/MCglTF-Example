@@ -1,4 +1,4 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +11,12 @@ import org.lwjgl.opengl.GL30;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
-import com.timlee9024.mcgltf.IGltfModelReceiver;
-import com.timlee9024.mcgltf.MCglTF;
-import com.timlee9024.mcgltf.RenderedGltfModel;
-import com.timlee9024.mcgltf.RenderedGltfScene;
-import com.timlee9024.mcgltf.animation.GltfAnimationCreator;
-import com.timlee9024.mcgltf.animation.InterpolatedChannel;
+import com.modularmods.mcgltf.IGltfModelReceiver;
+import com.modularmods.mcgltf.MCglTF;
+import com.modularmods.mcgltf.RenderedGltfModel;
+import com.modularmods.mcgltf.RenderedGltfScene;
+import com.modularmods.mcgltf.animation.GltfAnimationCreator;
+import com.modularmods.mcgltf.animation.InterpolatedChannel;
 
 import de.javagl.jgltf.model.AnimationModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -139,7 +139,6 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 		GL30.glBindVertexArray(currentVAO);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, currentArrayBuffer);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, currentElementArrayBuffer);
-		RenderedGltfModel.nodeGlobalTransformLookup.clear();
 	}
 
 }
