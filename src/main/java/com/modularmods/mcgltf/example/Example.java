@@ -1,4 +1,4 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 @Mod(modid = "example_mcgltf_usage", dependencies = "required-after-client:mcgltf;", useMetadata = true)
 public class Example {
 
-	@SidedProxy(clientSide = "com.timlee9024.mcgltf.example.ClientProxy", serverSide = "com.timlee9024.mcgltf.example.ServerProxy")
+	@SidedProxy(clientSide = "com.modularmods.mcgltf.example.ClientProxy", serverSide = "com.modularmods.mcgltf.example.ServerProxy")
 	public static CommonProxy proxy;
 	
 	@EventHandler

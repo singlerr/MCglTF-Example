@@ -1,4 +1,4 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;

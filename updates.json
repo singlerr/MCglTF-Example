@@ -1,13 +1,14 @@
 {
-	"homepage": "https://github.com/TimLee9024/MCglTF-Example/releases",
+	"homepage": "https://github.com/ModularMods/MCglTF-Example/releases",
 	"1.12.2": {
+		"1.12.2-Forge-2.0.0.0": "Update to compatible with MCglTF-2.0.0.0",
 		"1.12.2-Forge-1.2.0.0": "Update to compatible with MCglTF-1.2.0.0",
 		"1.12.2-Forge-1.1.0.1": "Fix updateURL",
 		"1.12.2-Forge-1.1.0.0": "Change TEISR usage",
 		"1.12.2-Forge-1.0.0.0": "Initial release"
 	},
 	"promos": {
-		"1.12.2-latest": "1.12.2-Forge-1.2.0.0",
-		"1.12.2-recommended": "1.12.2-Forge-1.2.0.0"
+		"1.12.2-latest": "1.12.2-Forge-2.0.0.0",
+		"1.12.2-recommended": "1.12.2-Forge-2.0.0.0"
 	}
 }
