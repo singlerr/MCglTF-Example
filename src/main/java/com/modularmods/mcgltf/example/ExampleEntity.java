@@ -1,4 +1,4 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.Villager;
