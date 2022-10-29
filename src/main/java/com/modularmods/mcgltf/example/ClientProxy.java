@@ -1,7 +1,7 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
-import com.timlee9024.mcgltf.ItemCameraTransformsHelper;
-import com.timlee9024.mcgltf.MCglTF;
+import com.modularmods.mcgltf.ItemCameraTransformsHelper;
+import com.modularmods.mcgltf.MCglTF;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
