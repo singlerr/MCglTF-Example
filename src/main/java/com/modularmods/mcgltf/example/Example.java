@@ -1,4 +1,4 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;

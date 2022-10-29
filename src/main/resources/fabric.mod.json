@@ -6,12 +6,12 @@
   "name": "Example MCglTF Usage",
   "description": "Example mod to demonstrate the usage of MCglTF.",
   "authors": [
-    "TimLee9024"
+    "TimLee9024", "Protoxy"
   ],
   "contact": {
-    "homepage": "https://github.com/TimLee9024/MCglTF-Example/tree/1.16.5-Fabric",
-    "sources": "https://github.com/TimLee9024/MCglTF-Example/tree/1.16.5-Fabric",
-    "issues": "https://github.com/TimLee9024/MCglTF-Example/issues"
+    "homepage": "https://github.com/ModularMods/MCglTF-Example/tree/1.16.5-Fabric",
+    "sources": "https://github.com/ModularMods/MCglTF-Example/tree/1.16.5-Fabric",
+    "issues": "https://github.com/ModularMods/MCglTF-Example/issues"
   },
 
   "license": "MIT",
@@ -20,10 +20,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.timlee9024.mcgltf.example.Example"
+      "com.modularmods.mcgltf.example.Example"
     ],
     "client": [
-      "com.timlee9024.mcgltf.example.ExampleClient"
+      "com.modularmods.mcgltf.example.ExampleClient"
     ]
   },
 
