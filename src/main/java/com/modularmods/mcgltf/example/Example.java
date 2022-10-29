@@ -1,7 +1,7 @@
-package com.timlee9024.mcgltf.example;
+package com.modularmods.mcgltf.example;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.timlee9024.mcgltf.MCglTF;
+import com.modularmods.mcgltf.MCglTF;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
