@@ -56,8 +56,8 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 	}
 
 	@Override
-	public void render(ExampleEntity p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
-		float time = (p_114485_.level.getGameTime() + p_114487_) / 20;
+	public void render(ExampleEntity entity, float yRotDelta, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
+		float time = (entity.level.getGameTime() + tickDelta) / 20;
 		//Play every animation clips simultaneously
 		for(List<InterpolatedChannel> animation : animations) {
 			animation.parallelStream().forEach((channel) -> {
@@ -78,13 +78,13 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		GL11.glEnable(GL11.GL_BLEND);
 		GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		p_114488_.pushPose();
-		p_114488_.mulPose(new Quaternion(0.0F, Mth.rotLerp(p_114487_, p_114485_.yBodyRotO, p_114485_.yBodyRot), 0.0F, true));
-		RenderedGltfModel.CURRENT_POSE = p_114488_.last().pose();
-		RenderedGltfModel.CURRENT_NORMAL = p_114488_.last().normal();
-		p_114488_.popPose();
+		matrices.pushPose();
+		matrices.mulPose(new Quaternion(0.0F, Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot), 0.0F, true));
+		RenderedGltfModel.CURRENT_POSE = matrices.last().pose();
+		RenderedGltfModel.CURRENT_NORMAL = matrices.last().normal();
+		matrices.popPose();
 		
-		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_114490_ & '\uffff', p_114490_ >> 16 & '\uffff');
+		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, light & '\uffff', light >> 16 & '\uffff');
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			renderedScene.renderForShaderMod();
@@ -122,7 +122,11 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		GL30.glBindVertexArray(currentVAO);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, currentArrayBuffer);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, currentElementArrayBuffer);
-		super.render(p_114485_, p_114486_, p_114487_, p_114488_, p_114489_, p_114490_);
+		super.render(entity, yRotDelta, tickDelta, matrices, vertexConsumers, light);
+	}
+	
+	protected void checkAndRenderNameTag(ExampleEntity entity, float yRotDelta, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
+		super.render(entity, yRotDelta, tickDelta, matrices, vertexConsumers, light);
 	}
 
 }
