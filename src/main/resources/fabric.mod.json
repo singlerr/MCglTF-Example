@@ -34,9 +34,7 @@
     "java": ">=17"
   },
   "suggests": {
-    "optifabric": "*"
-  },
-  "conflicts": {
-  	"iris": "*"
+    "optifabric": "*",
+    "iris": ">=1.4.0"
   }
 }

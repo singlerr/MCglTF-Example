@@ -49,10 +49,10 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 
 	/**
 	 * Since you use custom BEWLR(DynamicItemRenderer) for BlockItem instead of BER to render item form of block,
-	 * the last parameters p_112312_ which control overlay color is almost never used.
+	 * the last parameters which control overlay color is almost never used.
 	 */
 	@Override
-	public void render(ExampleBlockEntity p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
+	public void render(ExampleBlockEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
 		int currentVAO = GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
 		int currentArrayBuffer = GL11.glGetInteger(GL15.GL_ARRAY_BUFFER_BINDING);
 		int currentElementArrayBuffer = GL11.glGetInteger(GL15.GL_ELEMENT_ARRAY_BUFFER_BINDING);
@@ -65,10 +65,10 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 		GL11.glEnable(GL11.GL_BLEND);
 		GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		p_112309_.pushPose();
-		Level level = p_112307_.getLevel();
+		matrices.pushPose();
+		Level level = blockEntity.getLevel();
 		if(level != null) {
-			float time = (level.getGameTime() + p_112308_) / 20;
+			float time = (level.getGameTime() + tickDelta) / 20;
 			//Play every animation clips simultaneously
 			for(List<InterpolatedChannel> animation : animations) {
 				animation.parallelStream().forEach((channel) -> {
@@ -77,8 +77,8 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 				});
 			}
 			
-			p_112309_.translate(0.5, 0.5, 0.5); //Make sure it is in the center of the block
-			switch(level.getBlockState(p_112307_.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
+			matrices.translate(0.5, 0.5, 0.5); //Make sure it is in the center of the block
+			switch(level.getBlockState(blockEntity.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
 			case DOWN:
 				break;
 			case UP:
@@ -86,22 +86,22 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 			case NORTH:
 				break;
 			case SOUTH:
-				p_112309_.mulPose(new Quaternion(0.0F, 1.0F, 0.0F, 0.0F));
+				matrices.mulPose(new Quaternion(0.0F, 1.0F, 0.0F, 0.0F));
 				break;
 			case WEST:
-				p_112309_.mulPose(new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F));
+				matrices.mulPose(new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F));
 				break;
 			case EAST:
-				p_112309_.mulPose(new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F));
+				matrices.mulPose(new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F));
 				break;
 			}
 		}
 		
-		RenderedGltfModel.CURRENT_POSE = p_112309_.last().pose();
-		RenderedGltfModel.CURRENT_NORMAL = p_112309_.last().normal();
-		p_112309_.popPose();
+		RenderedGltfModel.CURRENT_POSE = matrices.last().pose();
+		RenderedGltfModel.CURRENT_NORMAL = matrices.last().normal();
+		matrices.popPose();
 		
-		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_112311_ & '\uffff', p_112311_ >> 16 & '\uffff');
+		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, light & '\uffff', light >> 16 & '\uffff');
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			renderedScene.renderForShaderMod();
