@@ -54,8 +54,8 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 	}
 
 	@Override
-	public void render(ExampleEntity p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack p_225623_4_, MultiBufferSource p_225623_5_, int p_225623_6_) {
-		float time = (p_225623_1_.level.getGameTime() + p_225623_3_) / 20;
+	public void render(ExampleEntity entity, float yRotDelta, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
+		float time = (entity.level.getGameTime() + tickDelta) / 20;
 		//Play every animation clips simultaneously
 		for(List<InterpolatedChannel> animation : animations) {
 			animation.parallelStream().forEach((channel) -> {
@@ -75,10 +75,10 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		RenderSystem.multMatrix(p_225623_4_.last().pose());
-		GL11.glRotatef(Mth.rotLerp(p_225623_3_, p_225623_1_.yBodyRotO, p_225623_1_.yBodyRot), 0.0F, 1.0F, 0.0F);
+		RenderSystem.multMatrix(matrices.last().pose());
+		GL11.glRotatef(Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot), 0.0F, 1.0F, 0.0F);
 		
-		GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_225623_6_ & '\uffff'), (short)(p_225623_6_ >> 16 & '\uffff'));
+		GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(light & '\uffff'), (short)(light >> 16 & '\uffff'));
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			renderedScene.renderForShaderMod();
@@ -92,7 +92,11 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
-		super.render(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
+		super.render(entity, yRotDelta, tickDelta, matrices, vertexConsumers, light);
+	}
+	
+	protected void checkAndRenderNameTag(ExampleEntity entity, float yRotDelta, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
+		super.render(entity, yRotDelta, tickDelta, matrices, vertexConsumers, light);
 	}
 
 }
