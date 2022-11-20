@@ -52,10 +52,10 @@ public class ExampleBlockEntityRenderer extends BlockEntityRenderer<ExampleBlock
 
 	/**
 	 * Since you use custom BEWLR(DynamicItemRenderer) for BlockItem instead of BER to render item form of block,
-	 * the last parameters p_225616_6_ which control overlay color is almost never used.
+	 * the last parameters which control overlay color is almost never used.
 	 */
 	@Override
-	public void render(ExampleBlockEntity p_225616_1_, float p_225616_2_, PoseStack p_225616_3_, MultiBufferSource p_225616_4_, int p_225616_5_, int p_225616_6_) {
+	public void render(ExampleBlockEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		
@@ -67,10 +67,10 @@ public class ExampleBlockEntityRenderer extends BlockEntityRenderer<ExampleBlock
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
-		RenderSystem.multMatrix(p_225616_3_.last().pose());
-		Level level = p_225616_1_.getLevel();
+		RenderSystem.multMatrix(matrices.last().pose());
+		Level level = blockEntity.getLevel();
 		if(level != null) {
-			float time = (level.getGameTime() + p_225616_2_) / 20;
+			float time = (level.getGameTime() + tickDelta) / 20;
 			//Play every animation clips simultaneously
 			for(List<InterpolatedChannel> animation : animations) {
 				animation.parallelStream().forEach((channel) -> {
@@ -80,7 +80,7 @@ public class ExampleBlockEntityRenderer extends BlockEntityRenderer<ExampleBlock
 			}
 			
 			GL11.glTranslatef(0.5F, 0.0F, 0.5F); //Make sure it is in the center of the block
-			switch(level.getBlockState(p_225616_1_.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
+			switch(level.getBlockState(blockEntity.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
 			case DOWN:
 				break;
 			case UP:
@@ -99,7 +99,7 @@ public class ExampleBlockEntityRenderer extends BlockEntityRenderer<ExampleBlock
 			}
 		}
 		
-		GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(p_225616_5_ & '\uffff'), (short)(p_225616_5_ >> 16 & '\uffff'));
+		GL13.glMultiTexCoord2s(GL13.GL_TEXTURE2, (short)(light & '\uffff'), (short)(light >> 16 & '\uffff'));
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			renderedScene.renderForShaderMod();

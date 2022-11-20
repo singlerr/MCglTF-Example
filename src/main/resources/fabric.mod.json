@@ -33,9 +33,7 @@
     "minecraft": "1.16.x"
   },
   "suggests": {
-    "optifabric": "*"
-  },
-  "conflicts": {
-  	"iris": "*"
+    "optifabric": "*",
+    "iris": ">=1.4.0"
   }
 }
