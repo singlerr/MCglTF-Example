@@ -69,6 +69,7 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 		case FIRST_PERSON_LEFT_HAND:
 		case FIRST_PERSON_RIGHT_HAND:
 			Matrix4f modelViewMatrix = matrices.last().pose().copy();
+			Matrix3f normalMatrix = matrices.last().normal().copy();
 			if(MCglTF.getInstance().isShaderModActive()) {
 				IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("HAND_SOLID", renderType, () -> {
 					for(List<InterpolatedChannel> animation : animations) {
@@ -79,6 +80,7 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 					}
 					
 					RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
+					RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
 					
 					boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_BLEND);
@@ -96,7 +98,6 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 				});
 			}
 			else {
-				Matrix3f normalMatrix = matrices.last().normal().copy();
 				IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("NONE", renderType, () -> {
 					for(List<InterpolatedChannel> animation : animations) {
 						animation.parallelStream().forEach((channel) -> {
@@ -126,6 +127,7 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 			break;
 		default:
 			modelViewMatrix = matrices.last().pose().copy();
+			normalMatrix = matrices.last().normal().copy();
 			if(MCglTF.getInstance().isShaderModActive()) {
 				IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("ENTITIES", renderType, () -> {
 					for(List<InterpolatedChannel> animation : animations) {
@@ -136,6 +138,7 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 					}
 					
 					RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
+					RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
 					
 					boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_BLEND);
@@ -153,7 +156,6 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 				});
 			}
 			else {
-				Matrix3f normalMatrix = matrices.last().normal().copy();
 				IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("NONE", renderType, () -> {
 					for(List<InterpolatedChannel> animation : animations) {
 						animation.parallelStream().forEach((channel) -> {
