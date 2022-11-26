@@ -32,6 +32,7 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 		RenderType renderType = RenderType.entitySolid(TextureAtlas.LOCATION_BLOCKS);
 		vertexConsumers.getBuffer(renderType); //Put renderType into MultiBufferSource to ensure command submit to IrisRenderingHook will be run in Iris batched entity rendering.
 		Matrix4f modelViewMatrix = matrices.last().pose().copy();
+		Matrix3f normalMatrix = matrices.last().normal().copy();
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("ENTITIES", renderType, () -> {
@@ -44,8 +45,11 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 					});
 				}
 				
-				modelViewMatrix.multiply(new Quaternion(0.0F, Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot), 0.0F, true));
+				Quaternion rotation = new Quaternion(0.0F, Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot), 0.0F, true);
+				modelViewMatrix.multiply(rotation);
+				normalMatrix.mul(rotation);
 				RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
+				RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
 				
 				boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 				GL11.glEnable(GL11.GL_BLEND); //Since the renderType is entity solid, we need to turn on blending manually.
@@ -63,7 +67,6 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 			});
 		}
 		else {
-			Matrix3f normalMatrix = matrices.last().normal().copy();
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("NONE", renderType, () -> {
 				float time = (entity.level.getGameTime() + tickDelta) / 20;
 				for(List<InterpolatedChannel> animation : animations) {
