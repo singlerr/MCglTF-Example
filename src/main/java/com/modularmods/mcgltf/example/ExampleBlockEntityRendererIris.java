@@ -29,6 +29,7 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 		RenderType renderType = RenderType.entitySolid(TextureAtlas.LOCATION_BLOCKS);
 		vertexConsumers.getBuffer(renderType); //Put renderType into MultiBufferSource to ensure command submit to IrisRenderingHook will be run in Iris batched entity rendering.
 		Matrix4f modelViewMatrix = matrices.last().pose().copy();
+		Matrix3f normalMatrix = matrices.last().normal().copy();
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("BLOCK_ENTITIES", renderType, () -> {
@@ -52,18 +53,25 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 					case NORTH:
 						break;
 					case SOUTH:
-						modelViewMatrix.multiply(new Quaternion(0.0F, 1.0F, 0.0F, 0.0F));
+						Quaternion rotation = new Quaternion(0.0F, 1.0F, 0.0F, 0.0F);
+						modelViewMatrix.multiply(rotation);
+						normalMatrix.mul(rotation);
 						break;
 					case WEST:
-						modelViewMatrix.multiply(new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F));
+						rotation = new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F);
+						modelViewMatrix.multiply(rotation);
+						normalMatrix.mul(rotation);
 						break;
 					case EAST:
-						modelViewMatrix.multiply(new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F));
+						rotation = new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F);
+						modelViewMatrix.multiply(rotation);
+						normalMatrix.mul(rotation);
 						break;
 					}
 				}
 				
 				RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
+				RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
 				
 				boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 				GL11.glEnable(GL11.GL_BLEND); //Since the renderType is entity solid, we need to turn on blending manually.
@@ -81,7 +89,6 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 			});
 		}
 		else {
-			Matrix3f normalMatrix = matrices.last().normal().copy();
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("NONE", renderType, () -> {
 				Level level = blockEntity.getLevel();
 				if(level != null) {
