@@ -3,6 +3,7 @@ package com.modularmods.mcgltf.example;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -10,7 +11,6 @@ import org.lwjgl.opengl.GL30;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 import com.modularmods.mcgltf.IGltfModelReceiver;
 import com.modularmods.mcgltf.MCglTF;
 import com.modularmods.mcgltf.RenderedGltfModel;
@@ -86,13 +86,13 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 			case NORTH:
 				break;
 			case SOUTH:
-				matrices.mulPose(new Quaternion(0.0F, 1.0F, 0.0F, 0.0F));
+				matrices.mulPose(new Quaternionf(0.0F, 1.0F, 0.0F, 0.0F));
 				break;
 			case WEST:
-				matrices.mulPose(new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F));
+				matrices.mulPose(new Quaternionf(0.0F, 0.7071068F, 0.0F, 0.7071068F));
 				break;
 			case EAST:
-				matrices.mulPose(new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F));
+				matrices.mulPose(new Quaternionf(0.0F, -0.7071068F, 0.0F, 0.7071068F));
 				break;
 			}
 		}

@@ -2,6 +2,9 @@ package com.modularmods.mcgltf.example;
 
 import java.util.List;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -12,9 +15,6 @@ import com.modularmods.mcgltf.iris.IrisRenderingHook;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -44,12 +44,11 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 					});
 				}
 				
-				Quaternion rotateAround = new Quaternion(0.0F, 1.0F, 0.0F, 0.0F);
-				RenderedGltfModel.CURRENT_POSE = RenderSystem.getModelViewMatrix().copy();
-				RenderedGltfModel.CURRENT_POSE.multiply(rotateAround);
+				Quaternionf rotateAround = new Quaternionf(0.0F, 1.0F, 0.0F, 0.0F);
+				RenderedGltfModel.CURRENT_POSE = new Matrix4f(RenderSystem.getModelViewMatrix());
+				RenderedGltfModel.CURRENT_POSE.rotate(rotateAround);
 				RenderedGltfModel.CURRENT_NORMAL = new Matrix3f();
-				RenderedGltfModel.CURRENT_NORMAL.setIdentity();
-				RenderedGltfModel.CURRENT_NORMAL.mul(rotateAround);
+				RenderedGltfModel.CURRENT_NORMAL.rotate(rotateAround);
 				
 				boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 				GL11.glEnable(GL11.GL_BLEND); //Since the renderType is entity solid, we need to turn on blending manually.
@@ -68,8 +67,8 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 			break;
 		case FIRST_PERSON_LEFT_HAND:
 		case FIRST_PERSON_RIGHT_HAND:
-			Matrix4f modelViewMatrix = matrices.last().pose().copy();
-			Matrix3f normalMatrix = matrices.last().normal().copy();
+			Matrix4f modelViewMatrix = new Matrix4f(matrices.last().pose());
+			Matrix3f normalMatrix = new Matrix3f(matrices.last().normal());
 			if(MCglTF.getInstance().isShaderModActive()) {
 				IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("HAND_SOLID", renderType, () -> {
 					for(List<InterpolatedChannel> animation : animations) {
@@ -126,8 +125,8 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 			}
 			break;
 		default:
-			modelViewMatrix = matrices.last().pose().copy();
-			normalMatrix = matrices.last().normal().copy();
+			modelViewMatrix = new Matrix4f(matrices.last().pose());
+			normalMatrix = new Matrix3f(matrices.last().normal());
 			if(MCglTF.getInstance().isShaderModActive()) {
 				IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("ENTITIES", renderType, () -> {
 					for(List<InterpolatedChannel> animation : animations) {

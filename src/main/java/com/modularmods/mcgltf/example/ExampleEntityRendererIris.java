@@ -2,6 +2,9 @@ package com.modularmods.mcgltf.example;
 
 import java.util.List;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -11,9 +14,7 @@ import com.modularmods.mcgltf.animation.InterpolatedChannel;
 import com.modularmods.mcgltf.iris.IrisRenderingHook;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -31,8 +32,8 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 	public void render(ExampleEntity entity, float yRotDelta, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
 		RenderType renderType = RenderType.entitySolid(TextureAtlas.LOCATION_BLOCKS);
 		vertexConsumers.getBuffer(renderType); //Put renderType into MultiBufferSource to ensure command submit to IrisRenderingHook will be run in Iris batched entity rendering.
-		Matrix4f modelViewMatrix = matrices.last().pose().copy();
-		Matrix3f normalMatrix = matrices.last().normal().copy();
+		Matrix4f modelViewMatrix = new Matrix4f(matrices.last().pose());
+		Matrix3f normalMatrix = new Matrix3f(matrices.last().normal());
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("ENTITIES", renderType, () -> {
@@ -45,9 +46,9 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 					});
 				}
 				
-				Quaternion rotation = new Quaternion(0.0F, Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot), 0.0F, true);
-				modelViewMatrix.multiply(rotation);
-				normalMatrix.mul(rotation);
+				Quaternionf rotation = Axis.YP.rotationDegrees(Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot));
+				modelViewMatrix.rotate(rotation);
+				normalMatrix.rotate(rotation);
 				RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
 				RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
 				
@@ -76,9 +77,9 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 					});
 				}
 				
-				Quaternion rotation = new Quaternion(0.0F, Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot), 0.0F, true);
-				modelViewMatrix.multiply(rotation);
-				normalMatrix.mul(rotation);
+				Quaternionf rotation = Axis.YP.rotationDegrees(Mth.rotLerp(tickDelta, entity.yBodyRotO, entity.yBodyRot));
+				modelViewMatrix.rotate(rotation);
+				normalMatrix.rotate(rotation);
 				RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
 				RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
 				

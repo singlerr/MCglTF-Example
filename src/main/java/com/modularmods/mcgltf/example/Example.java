@@ -4,11 +4,11 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.SoundType;
@@ -37,25 +37,25 @@ public class Example implements ModInitializer {
 				.isRedstoneConductor((a, b, c) -> false)
 				.isSuffocating((a, b, c) -> false)
 				.isViewBlocking((a, b, c) -> false));
-		Registry.register(Registry.BLOCK, new ResourceLocation("mcgltf", "example_block"), exampleBlock);
+		Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation("mcgltf", "example_block"), exampleBlock);
 		
 		exampleEntityType = EntityType.Builder.of(ExampleEntity::new, MobCategory.MISC)
 				.sized(0.6F, 1.95F)
 				.clientTrackingRange(10)
 				.build("mcgltf:example_entity");
-		Registry.register(Registry.ENTITY_TYPE, new ResourceLocation("mcgltf", "example_entity"), exampleEntityType);
+		Registry.register(BuiltInRegistries.ENTITY_TYPE, new ResourceLocation("mcgltf", "example_entity"), exampleEntityType);
 		FabricDefaultAttributeRegistry.register(exampleEntityType, ExampleEntity.createAttributes());
 		
 		exampleBlockEntityType = FabricBlockEntityTypeBuilder.create(ExampleBlockEntity::new, exampleBlock).build();
-		Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation("mcgltf", "example_blockentity"), exampleBlockEntityType);
+		Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation("mcgltf", "example_blockentity"), exampleBlockEntityType);
 		
-		item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-		Registry.register(Registry.ITEM, new ResourceLocation("mcgltf", "example_item"), item);
+		item = new Item(new Item.Properties());
+		Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("mcgltf", "example_item"), item);
 		
-		blockItem = new BlockItem(exampleBlock, new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-		Registry.register(Registry.ITEM, new ResourceLocation("mcgltf", "example_block"), blockItem);
+		blockItem = new BlockItem(exampleBlock, new Item.Properties());
+		Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("mcgltf", "example_block"), blockItem);
 		
-		SpawnEggItem spawnEggItem = new SpawnEggItem(exampleEntityType, 12422002, 5651507,  new Item.Properties().tab(CreativeModeTab.TAB_MISC));
-		Registry.register(Registry.ITEM, new ResourceLocation("mcgltf", "example_entity_spawn_egg"), spawnEggItem);
+		SpawnEggItem spawnEggItem = new SpawnEggItem(exampleEntityType, 12422002, 5651507,  new Item.Properties());
+		Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("mcgltf", "example_entity_spawn_egg"), spawnEggItem);
 	}
 }

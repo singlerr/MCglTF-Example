@@ -3,6 +3,9 @@ package com.modularmods.mcgltf.example;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -11,8 +14,6 @@ import org.lwjgl.opengl.GL30;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Quaternion;
 import com.modularmods.mcgltf.IGltfModelReceiver;
 import com.modularmods.mcgltf.MCglTF;
 import com.modularmods.mcgltf.RenderedGltfModel;
@@ -153,12 +154,11 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver, Builtin
 			if(!currentBlend) GL11.glDisable(GL11.GL_BLEND);
 			break;
 		case GUI:
-			Quaternion rotateAround = new Quaternion(0.0F, 1.0F, 0.0F, 0.0F);
-			RenderedGltfModel.CURRENT_POSE = RenderSystem.getModelViewMatrix().copy();
-			RenderedGltfModel.CURRENT_POSE.multiply(rotateAround);
+			Quaternionf rotateAround = new Quaternionf(0.0F, 1.0F, 0.0F, 0.0F);
+			RenderedGltfModel.CURRENT_POSE = new Matrix4f(RenderSystem.getModelViewMatrix());
+			RenderedGltfModel.CURRENT_POSE.rotate(rotateAround);
 			RenderedGltfModel.CURRENT_NORMAL = new Matrix3f();
-			RenderedGltfModel.CURRENT_NORMAL.setIdentity();
-			RenderedGltfModel.CURRENT_NORMAL.mul(rotateAround);
+			RenderedGltfModel.CURRENT_NORMAL.rotate(rotateAround);
 			
 			GL13.glActiveTexture(GL13.GL_TEXTURE2);
 			int currentTexture2 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);

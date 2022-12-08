@@ -2,6 +2,9 @@ package com.modularmods.mcgltf.example;
 
 import java.util.List;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -11,9 +14,6 @@ import com.modularmods.mcgltf.animation.InterpolatedChannel;
 import com.modularmods.mcgltf.iris.IrisRenderingHook;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -28,8 +28,8 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 	public void render(ExampleBlockEntity blockEntity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
 		RenderType renderType = RenderType.entitySolid(TextureAtlas.LOCATION_BLOCKS);
 		vertexConsumers.getBuffer(renderType); //Put renderType into MultiBufferSource to ensure command submit to IrisRenderingHook will be run in Iris batched entity rendering.
-		Matrix4f modelViewMatrix = matrices.last().pose().copy();
-		Matrix3f normalMatrix = matrices.last().normal().copy();
+		Matrix4f modelViewMatrix = new Matrix4f(matrices.last().pose());
+		Matrix3f normalMatrix = new Matrix3f(matrices.last().normal());
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("BLOCK_ENTITIES", renderType, () -> {
@@ -44,7 +44,7 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 						});
 					}
 					
-					modelViewMatrix.multiplyWithTranslation(0.5F, 0.5F, 0.5F); //Make sure it is in the center of the block
+					modelViewMatrix.translate(0.5F, 0.5F, 0.5F); //Make sure it is in the center of the block
 					switch(level.getBlockState(blockEntity.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
 					case DOWN:
 						break;
@@ -53,19 +53,19 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 					case NORTH:
 						break;
 					case SOUTH:
-						Quaternion rotation = new Quaternion(0.0F, 1.0F, 0.0F, 0.0F);
-						modelViewMatrix.multiply(rotation);
-						normalMatrix.mul(rotation);
+						Quaternionf rotation = new Quaternionf(0.0F, 1.0F, 0.0F, 0.0F);
+						modelViewMatrix.rotate(rotation);
+						normalMatrix.rotate(rotation);
 						break;
 					case WEST:
-						rotation = new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F);
-						modelViewMatrix.multiply(rotation);
-						normalMatrix.mul(rotation);
+						rotation = new Quaternionf(0.0F, 0.7071068F, 0.0F, 0.7071068F);
+						modelViewMatrix.rotate(rotation);
+						normalMatrix.rotate(rotation);
 						break;
 					case EAST:
-						rotation = new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F);
-						modelViewMatrix.multiply(rotation);
-						normalMatrix.mul(rotation);
+						rotation = new Quaternionf(0.0F, -0.7071068F, 0.0F, 0.7071068F);
+						modelViewMatrix.rotate(rotation);
+						normalMatrix.rotate(rotation);
 						break;
 					}
 				}
@@ -100,7 +100,7 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 						});
 					}
 					
-					modelViewMatrix.multiplyWithTranslation(0.5F, 0.5F, 0.5F);
+					modelViewMatrix.translate(0.5F, 0.5F, 0.5F);
 					switch(level.getBlockState(blockEntity.getBlockPos()).getOptionalValue(HorizontalDirectionalBlock.FACING).orElse(Direction.NORTH)) {
 					case DOWN:
 						break;
@@ -109,19 +109,19 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 					case NORTH:
 						break;
 					case SOUTH:
-						Quaternion rotation = new Quaternion(0.0F, 1.0F, 0.0F, 0.0F);
-						modelViewMatrix.multiply(rotation);
-						normalMatrix.mul(rotation);
+						Quaternionf rotation = new Quaternionf(0.0F, 1.0F, 0.0F, 0.0F);
+						modelViewMatrix.rotate(rotation);
+						normalMatrix.rotate(rotation);
 						break;
 					case WEST:
-						rotation = new Quaternion(0.0F, 0.7071068F, 0.0F, 0.7071068F);
-						modelViewMatrix.multiply(rotation);
-						normalMatrix.mul(rotation);
+						rotation = new Quaternionf(0.0F, 0.7071068F, 0.0F, 0.7071068F);
+						modelViewMatrix.rotate(rotation);
+						normalMatrix.rotate(rotation);
 						break;
 					case EAST:
-						rotation = new Quaternion(0.0F, -0.7071068F, 0.0F, 0.7071068F);
-						modelViewMatrix.multiply(rotation);
-						normalMatrix.mul(rotation);
+						rotation = new Quaternionf(0.0F, -0.7071068F, 0.0F, 0.7071068F);
+						modelViewMatrix.rotate(rotation);
+						normalMatrix.rotate(rotation);
 						break;
 					}
 				}
