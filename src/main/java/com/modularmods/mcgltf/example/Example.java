@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
@@ -61,9 +60,9 @@ public class Example {
 			});
 			
 			event.register(ForgeRegistries.Keys.ITEMS, helper -> {
-				helper.register(new ResourceLocation("mcgltf", "example_item"), new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-				helper.register(new ResourceLocation("mcgltf", "example_block"), new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
-				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+				helper.register(new ResourceLocation("mcgltf", "example_item"), new Item(new Item.Properties()));
+				helper.register(new ResourceLocation("mcgltf", "example_block"), new BlockItem(EXAMPLE_BLOCK, new Item.Properties()));
+				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties()));
 			});
 		}
 		
@@ -142,7 +141,7 @@ public class Example {
 			};
 			
 			event.register(ForgeRegistries.Keys.ITEMS, helper -> {
-				item = new Item(new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+				item = new Item(new Item.Properties()) {
 
 					@Override
 					public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -151,7 +150,7 @@ public class Example {
 					
 				};
 				helper.register(new ResourceLocation("mcgltf", "example_item"), item);
-				blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
+				blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties()) {
 
 					@Override
 					public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -160,7 +159,7 @@ public class Example {
 					
 				};
 				helper.register(new ResourceLocation("mcgltf", "example_block"), blockItem);
-				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties()));
 			});
 		}
 		

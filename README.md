@@ -1,7 +1,7 @@
 # MCglTF-Example
  Example usages for MCglTF
  
-![preview](https://user-images.githubusercontent.com/39574697/177475208-a14f9aa6-5134-4f91-8596-f61c25f09053.png)
+![preview](https://user-images.githubusercontent.com/39574697/206445639-19ceded1-bb50-499a-95a3-98530f3a4a95.png)
 ## Model Source
 https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0#gltf-20-sample-models
 

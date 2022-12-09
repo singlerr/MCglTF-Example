@@ -1,18 +1,10 @@
 {
 	"homepage": "https://github.com/ModularMods/MCglTF-Example/releases",
-	"1.19.2": {
-		"1.19.2-Forge-2.0.0.0": "Update to compatible with MCglTF-2.0.0.0"
-	},
-	"1.19": {
-		"1.19.2-Forge-2.0.0.0": "Update to compatible with MCglTF-2.0.0.0",
-		"1.19-Forge-1.2.0.0": "Update to compatible with MCglTF-1.2.0.0",
-		"1.19-Forge-1.0.0.1": "Update to compatible with Forge 1.19-41.0.110",
-		"1.19-Forge-1.0.0.0": "Initial release"
+	"1.19.3": {
+		"1.19.3-Forge-2.1.0.0": "Initial release"
 	},
 	"promos": {
-		"1.19.2-latest": "1.19.2-Forge-2.0.0.0",
-		"1.19.2-recommended": "1.19.2-Forge-2.0.0.0",
-		"1.19-latest": "1.19.2-Forge-2.0.0.0",
-		"1.19-recommended": "1.19.2-Forge-2.0.0.0"
+		"1.19.3-latest": "1.19.3-Forge-2.1.0.0",
+		"1.19.3-recommended": "1.19.3-Forge-2.1.0.0"
 	}
 }

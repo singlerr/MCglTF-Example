@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL30;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
+import com.mojang.math.Axis;
 import com.modularmods.mcgltf.IGltfModelReceiver;
 import com.modularmods.mcgltf.MCglTF;
 import com.modularmods.mcgltf.RenderedGltfModel;
@@ -79,7 +79,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		p_114488_.pushPose();
-		p_114488_.mulPose(new Quaternion(0.0F, Mth.rotLerp(p_114487_, p_114485_.yBodyRotO, p_114485_.yBodyRot), 0.0F, true));
+		p_114488_.mulPose(Axis.YP.rotationDegrees(Mth.rotLerp(p_114487_, p_114485_.yBodyRotO, p_114485_.yBodyRot)));
 		RenderedGltfModel.CURRENT_POSE = p_114488_.last().pose();
 		RenderedGltfModel.CURRENT_NORMAL = p_114488_.last().normal();
 		p_114488_.popPose();
