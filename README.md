@@ -15,3 +15,5 @@ In order to adapt into BSL Shaders' SEUS/Old PBR format, some change were made:
 1. Create a folder named `libs` in the same dir level as `src`.
 2. Download MCglTF jar from curseforge and then put into the `libs` folder.
 3. In Eclipse IDE, add MCglTF jar as `Referenced Libraries` via `Project > Properties > Java Build Path > Libraries > Add JARs`.
+### Alternative Way
+Using [Curse Maven](https://www.cursemaven.com/) to add MCglTF into project via [build.gradle](https://github.com/DimensionalDevelopment/atlantis/blob/8d073bde280c0f3eefe6107a5ccdd035b3174682/build.gradle#L129)
