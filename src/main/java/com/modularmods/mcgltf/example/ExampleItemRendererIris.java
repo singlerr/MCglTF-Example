@@ -45,10 +45,8 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 				}
 				
 				Quaternionf rotateAround = new Quaternionf(0.0F, 1.0F, 0.0F, 0.0F);
-				RenderedGltfModel.CURRENT_POSE = new Matrix4f(RenderSystem.getModelViewMatrix());
-				RenderedGltfModel.CURRENT_POSE.rotate(rotateAround);
-				RenderedGltfModel.CURRENT_NORMAL = new Matrix3f();
-				RenderedGltfModel.CURRENT_NORMAL.rotate(rotateAround);
+				RenderedGltfModel.setCurrentPose((new Matrix4f(RenderSystem.getModelViewMatrix()).rotate(rotateAround)));
+				RenderedGltfModel.setCurrentNormal((new Matrix3f().rotate(rotateAround)));
 				
 				boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 				GL11.glEnable(GL11.GL_BLEND); //Since the renderType is entity solid, we need to turn on blending manually.
@@ -78,8 +76,8 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 						});
 					}
 					
-					RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
-					RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
+					RenderedGltfModel.setCurrentPose(modelViewMatrix);
+					RenderedGltfModel.setCurrentNormal(normalMatrix);
 					
 					boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_BLEND);
@@ -105,8 +103,8 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 						});
 					}
 					
-					RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
-					RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
+					RenderedGltfModel.setCurrentPose(modelViewMatrix);
+					RenderedGltfModel.setCurrentNormal(normalMatrix);
 					
 					boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_BLEND);
@@ -136,8 +134,8 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 						});
 					}
 					
-					RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
-					RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
+					RenderedGltfModel.setCurrentPose(modelViewMatrix);
+					RenderedGltfModel.setCurrentNormal(normalMatrix);
 					
 					boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_BLEND);
@@ -163,8 +161,8 @@ public abstract class ExampleItemRendererIris extends ExampleItemRenderer {
 						});
 					}
 					
-					RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
-					RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
+					RenderedGltfModel.setCurrentPose(modelViewMatrix);
+					RenderedGltfModel.setCurrentNormal(normalMatrix);
 					
 					boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_BLEND);

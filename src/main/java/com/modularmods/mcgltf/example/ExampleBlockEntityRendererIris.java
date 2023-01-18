@@ -70,8 +70,8 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 					}
 				}
 				
-				RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
-				RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
+				RenderedGltfModel.setCurrentPose(modelViewMatrix);
+				RenderedGltfModel.setCurrentNormal(normalMatrix);
 				
 				boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 				GL11.glEnable(GL11.GL_BLEND); //Since the renderType is entity solid, we need to turn on blending manually.
@@ -126,8 +126,8 @@ public class ExampleBlockEntityRendererIris extends ExampleBlockEntityRenderer {
 					}
 				}
 				
-				RenderedGltfModel.CURRENT_POSE = modelViewMatrix;
-				RenderedGltfModel.CURRENT_NORMAL = normalMatrix;
+				RenderedGltfModel.setCurrentPose(modelViewMatrix);
+				RenderedGltfModel.setCurrentNormal(normalMatrix);
 				
 				boolean currentBlend = GL11.glGetBoolean(GL11.GL_BLEND);
 				GL11.glEnable(GL11.GL_BLEND);

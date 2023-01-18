@@ -97,8 +97,8 @@ public class ExampleBlockEntityRenderer implements IGltfModelReceiver, BlockEnti
 			}
 		}
 		
-		RenderedGltfModel.CURRENT_POSE = matrices.last().pose();
-		RenderedGltfModel.CURRENT_NORMAL = matrices.last().normal();
+		RenderedGltfModel.setCurrentPose(matrices.last().pose());
+		RenderedGltfModel.setCurrentNormal(matrices.last().normal());
 		matrices.popPose();
 		
 		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, light & '\uffff', light >> 16 & '\uffff');
