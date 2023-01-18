@@ -80,8 +80,8 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 		
 		p_114488_.pushPose();
 		p_114488_.mulPose(Axis.YP.rotationDegrees(Mth.rotLerp(p_114487_, p_114485_.yBodyRotO, p_114485_.yBodyRot)));
-		RenderedGltfModel.CURRENT_POSE = p_114488_.last().pose();
-		RenderedGltfModel.CURRENT_NORMAL = p_114488_.last().normal();
+		RenderedGltfModel.setCurrentPose(p_114488_.last().pose());
+		RenderedGltfModel.setCurrentNormal(p_114488_.last().normal());
 		p_114488_.popPose();
 		
 		GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_114490_ & '\uffff', p_114490_ >> 16 & '\uffff');

@@ -70,8 +70,8 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			GL11.glEnable(GL11.GL_BLEND);
 			GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			
-			RenderedGltfModel.CURRENT_POSE = p_108832_.last().pose();
-			RenderedGltfModel.CURRENT_NORMAL = p_108832_.last().normal();
+			RenderedGltfModel.setCurrentPose(p_108832_.last().pose());
+			RenderedGltfModel.setCurrentNormal(p_108832_.last().normal());
 			
 			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV1, p_108835_ & '\uffff', p_108835_ >> 16 & '\uffff');
 			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_108834_ & '\uffff', p_108834_ >> 16 & '\uffff');
@@ -116,8 +116,8 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			GL11.glEnable(GL11.GL_BLEND);
 			GlStateManager._blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			
-			RenderedGltfModel.CURRENT_POSE = p_108832_.last().pose();
-			RenderedGltfModel.CURRENT_NORMAL = p_108832_.last().normal();
+			RenderedGltfModel.setCurrentPose(p_108832_.last().pose());
+			RenderedGltfModel.setCurrentNormal(p_108832_.last().normal());
 			
 			GL30.glVertexAttribI2i(RenderedGltfModel.vaUV2, p_108834_ & '\uffff', p_108834_ >> 16 & '\uffff');
 			
@@ -152,10 +152,8 @@ public abstract class ExampleItemRenderer implements IGltfModelReceiver {
 			break;
 		case GUI:
 			Quaternionf rotateAround = new Quaternionf(0.0F, 1.0F, 0.0F, 0.0F);
-			RenderedGltfModel.CURRENT_POSE = new Matrix4f(RenderSystem.getModelViewMatrix());
-			RenderedGltfModel.CURRENT_POSE.rotate(rotateAround);
-			RenderedGltfModel.CURRENT_NORMAL = new Matrix3f();
-			RenderedGltfModel.CURRENT_NORMAL.rotate(rotateAround);
+			RenderedGltfModel.setCurrentPose((new Matrix4f(RenderSystem.getModelViewMatrix()).rotate(rotateAround)));
+			RenderedGltfModel.setCurrentNormal((new Matrix3f().rotate(rotateAround)));
 			
 			GL13.glActiveTexture(GL13.GL_TEXTURE2);
 			int currentTexture2 = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
