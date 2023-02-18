@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.SoundType;
@@ -23,6 +24,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +34,9 @@ import net.minecraftforge.registries.RegisterEvent;
 @Mod("example_mcgltf_usage")
 public class Example {
 
+	public static Item EXAMPLE_ITEM;
+	public static BlockItem EXAMPLE_BLOCK_ITEM;
+	public static ForgeSpawnEggItem EXAMPLE_ENTITY_SPAWN_EGG;
 	public static ExampleBlock EXAMPLE_BLOCK;
 	public static BlockEntityType<ExampleBlockEntity> EXAMPLE_BLOCK_ENTITY_TYPE;
 	public static EntityType<ExampleEntity> EXAMPLE_ENTITY_TYPE;
@@ -60,9 +65,9 @@ public class Example {
 			});
 			
 			event.register(ForgeRegistries.Keys.ITEMS, helper -> {
-				helper.register(new ResourceLocation("mcgltf", "example_item"), new Item(new Item.Properties()));
-				helper.register(new ResourceLocation("mcgltf", "example_block"), new BlockItem(EXAMPLE_BLOCK, new Item.Properties()));
-				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties()));
+				helper.register(new ResourceLocation("mcgltf", "example_item"), EXAMPLE_ITEM = new Item(new Item.Properties()));
+				helper.register(new ResourceLocation("mcgltf", "example_block"), EXAMPLE_BLOCK_ITEM = new BlockItem(EXAMPLE_BLOCK, new Item.Properties()));
+				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), EXAMPLE_ENTITY_SPAWN_EGG = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties()));
 			});
 		}
 		
@@ -70,14 +75,24 @@ public class Example {
 		public static void onEvent(EntityAttributeCreationEvent event) {
 			event.put(EXAMPLE_ENTITY_TYPE, ExampleEntity.createAttributes().build());
 		}
+		
+		@SubscribeEvent
+		public static void onEvent(CreativeModeTabEvent.BuildContents event) {
+			if(event.getTab() == CreativeModeTabs.FOOD_AND_DRINKS) {
+				event.accept(EXAMPLE_ITEM);
+			}
+			else if(event.getTab() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+				event.accept(EXAMPLE_BLOCK_ITEM);
+			}
+			else if(event.getTab() == CreativeModeTabs.SPAWN_EGGS) {
+				event.accept(EXAMPLE_ENTITY_SPAWN_EGG);
+			}
+		}
 	}
 	
 	@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 	public static class Client {
 
-		private static Item item;
-		private static BlockItem blockItem;
-		
 		@SubscribeEvent
 		public static void onEvent(RegisterEvent event) {
 			event.register(ForgeRegistries.Keys.BLOCKS, helper -> {
@@ -122,10 +137,10 @@ public class Example {
 				@Override
 				public void renderByItem(ItemStack p_108830_, ItemTransforms.TransformType p_108831_, PoseStack p_108832_, MultiBufferSource p_108833_, int p_108834_, int p_108835_) {
 					Item currentItem = p_108830_.getItem();
-					if(currentItem == item) {
+					if(currentItem == EXAMPLE_ITEM) {
 						itemRenderer.renderByItem(p_108831_, p_108832_, p_108833_, p_108834_, p_108835_);
 					}
-					else if(currentItem == blockItem) {
+					else if(currentItem == EXAMPLE_BLOCK_ITEM) {
 						blockItemRenderer.renderByItem(p_108831_, p_108832_, p_108833_, p_108834_, p_108835_);
 					}
 				}
@@ -141,7 +156,7 @@ public class Example {
 			};
 			
 			event.register(ForgeRegistries.Keys.ITEMS, helper -> {
-				item = new Item(new Item.Properties()) {
+				EXAMPLE_ITEM = new Item(new Item.Properties()) {
 
 					@Override
 					public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -149,8 +164,8 @@ public class Example {
 					}
 					
 				};
-				helper.register(new ResourceLocation("mcgltf", "example_item"), item);
-				blockItem = new BlockItem(EXAMPLE_BLOCK, new Item.Properties()) {
+				helper.register(new ResourceLocation("mcgltf", "example_item"), EXAMPLE_ITEM);
+				EXAMPLE_BLOCK_ITEM = new BlockItem(EXAMPLE_BLOCK, new Item.Properties()) {
 
 					@Override
 					public void initializeClient(Consumer<IClientItemExtensions> consumer) {
@@ -158,14 +173,27 @@ public class Example {
 					}
 					
 				};
-				helper.register(new ResourceLocation("mcgltf", "example_block"), blockItem);
-				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties()));
+				helper.register(new ResourceLocation("mcgltf", "example_block"), EXAMPLE_BLOCK_ITEM);
+				helper.register(new ResourceLocation("mcgltf", "example_entity_spawn_egg"), EXAMPLE_ENTITY_SPAWN_EGG = new ForgeSpawnEggItem(() -> EXAMPLE_ENTITY_TYPE, 12422002, 5651507, new Item.Properties()));
 			});
 		}
 		
 		@SubscribeEvent
 		public static void onEvent(EntityAttributeCreationEvent event) {
 			event.put(EXAMPLE_ENTITY_TYPE, ExampleEntity.createAttributes().build());
+		}
+		
+		@SubscribeEvent
+		public static void onEvent(CreativeModeTabEvent.BuildContents event) {
+			if(event.getTab() == CreativeModeTabs.FOOD_AND_DRINKS) {
+				event.accept(EXAMPLE_ITEM);
+			}
+			else if(event.getTab() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+				event.accept(EXAMPLE_BLOCK_ITEM);
+			}
+			else if(event.getTab() == CreativeModeTabs.SPAWN_EGGS) {
+				event.accept(EXAMPLE_ENTITY_SPAWN_EGG);
+			}
 		}
 		
 		@SubscribeEvent
