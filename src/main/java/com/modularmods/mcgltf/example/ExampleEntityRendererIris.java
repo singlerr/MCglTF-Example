@@ -37,7 +37,7 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 		
 		if(MCglTF.getInstance().isShaderModActive()) {
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("ENTITIES", renderType, () -> {
-				float time = (entity.level.getGameTime() + tickDelta) / 20;
+				float time = (entity.level().getGameTime() + tickDelta) / 20;
 				//Play every animation clips simultaneously
 				for(List<InterpolatedChannel> animation : animations) {
 					animation.parallelStream().forEach((channel) -> {
@@ -69,7 +69,7 @@ public class ExampleEntityRendererIris extends ExampleEntityRenderer {
 		}
 		else {
 			IrisRenderingHook.submitCommandForIrisRenderingByPhaseName("NONE", renderType, () -> {
-				float time = (entity.level.getGameTime() + tickDelta) / 20;
+				float time = (entity.level().getGameTime() + tickDelta) / 20;
 				for(List<InterpolatedChannel> animation : animations) {
 					animation.parallelStream().forEach((channel) -> {
 						float[] keys = channel.getKeys();

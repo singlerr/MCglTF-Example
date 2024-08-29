@@ -17,7 +17,6 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 
 public class Example implements ModInitializer {
 
@@ -33,7 +32,7 @@ public class Example implements ModInitializer {
 	public void onInitialize() {
 		INSTANCE = this;
 		
-		exampleBlock = new ExampleBlock(BlockBehaviour.Properties.of(Material.STONE).strength(0.3F)
+		exampleBlock = new ExampleBlock(BlockBehaviour.Properties.of().strength(0.3F)
 				.sound(SoundType.STONE)
 				.noOcclusion()
 				.isValidSpawn((a, b, c, d) -> false)

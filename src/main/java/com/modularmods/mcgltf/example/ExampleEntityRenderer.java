@@ -57,7 +57,7 @@ public class ExampleEntityRenderer extends EntityRenderer<ExampleEntity> impleme
 
 	@Override
 	public void render(ExampleEntity entity, float yRotDelta, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
-		float time = (entity.level.getGameTime() + tickDelta) / 20;
+		float time = (entity.level().getGameTime() + tickDelta) / 20;
 		//Play every animation clips simultaneously
 		for(List<InterpolatedChannel> animation : animations) {
 			animation.parallelStream().forEach((channel) -> {

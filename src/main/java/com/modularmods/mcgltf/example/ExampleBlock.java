@@ -1,5 +1,8 @@
 package com.modularmods.mcgltf.example;
 
+import com.mojang.datafixers.kinds.App;
+import com.mojang.serialization.*;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -14,11 +17,19 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 public class ExampleBlock extends HorizontalDirectionalBlock implements EntityBlock {
 
 	protected ExampleBlock(Properties p_54120_) {
 		super(p_54120_);
 		registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+	}
+
+	@Override
+	protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+		return null;
 	}
 
 	@Override
